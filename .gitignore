@@ -1,0 +1,32 @@
+# --- Python ---------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+# --- Databases ------------------------------------------------------------
+*.db
+*.sqlite
+*.sqlite3
+
+# --- Tooling --------------------------------------------------------------
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Frontend (apps/web, not built yet) -----------------------------------
+node_modules/
+dist/
+build/
+.vite/
+
+# --- Editors / OS ---------------------------------------------------------
+.idea/
+.vscode/
+.DS_Store

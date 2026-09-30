@@ -1,0 +1,170 @@
+# Render Blueprint for Agent DA.
+#
+#   Web Service  -> FastAPI + the in-process scheduler (LangGraph agent)
+#   Cron Job     -> dispatch safety net, in case the scheduler stalls on deploy
+#   Postgres     -> agendas, to-dos, points ledger, reminders, graph checkpoints
+#
+# Deploy with: Dashboard -> Blueprints -> New Blueprint Instance -> this repo.
+# Values marked `sync: false` must be filled in from the Render dashboard.
+
+databases:
+  - name: agent-da-db
+    databaseName: agent_da
+    user: agent_da
+    plan: basic-256mb
+    region: oregon
+
+services:
+  - type: web
+    name: agent-da-api
+    runtime: python
+    plan: starter
+    region: oregon
+    rootDir: apps/api
+    healthCheckPath: /healthz
+    autoDeploy: true
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      alembic upgrade head
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips '*'
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: agent-da-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: INTERNAL_TOKEN
+        generateValue: true
+      - key: CHECKPOINTER_BACKEND
+        value: postgres
+      - key: SCHEDULER_ENABLED
+        value: "true"
+      - key: LLM_MODEL
+        value: nvidia/nemotron-3-ultra-550b-a55b
+      # ---- fill these in from the dashboard ----
+      - key: PUBLIC_BASE_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: NVIDIA_API_KEY
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: WHATSAPP_PROVIDER
+        value: auto
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_WHATSAPP_FROM
+        sync: false
+      - key: TWILIO_CONTENT_SID
+        sync: false
+      - key: META_WHATSAPP_TOKEN
+        sync: false
+      - key: META_WHATSAPP_PHONE_NUMBER_ID
+        sync: false
+
+  - type: cron
+    name: agent-da-dispatch-safety-net
+    runtime: python
+    plan: starter
+    region: oregon
+    rootDir: apps/api
+    schedule: "*/5 * * * *"
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m app.cli dispatch
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: agent-da-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SCHEDULER_ENABLED
+        value: "false"
+      - key: LLM_MODEL
+        value: nvidia/nemotron-3-ultra-550b-a55b
+      - key: NVIDIA_API_KEY
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: WHATSAPP_PROVIDER
+        value: auto
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_WHATSAPP_FROM
+        sync: false
+
+  # Optional: drives the nightly day-close (streaks, missed-day penalties,
+  # weekly rollups) so it happens even if the web service is mid-deploy.
+  - type: cron
+    name: agent-da-day-close
+    runtime: python
+    plan: starter
+    region: oregon
+    rootDir: apps/api
+    schedule: "0 * * * *"
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m app.cli day-close
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: agent-da-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SCHEDULER_ENABLED
+        value: "false"
+      - key: MISSED_DAY_DEDUCTION
+        value: "5"
+      - key: ALLOW_POINT_DEDUCTIONS
+        value: "true"
+
+  # The React app is not built yet. When it is, add a static site here:
+  #
+  # - type: web
+  #   name: agent-da-web
+  #   runtime: static
+  #   rootDir: apps/web
+  #   buildCommand: npm ci && npm run build
+  #   staticPublishPath: dist
+  #   envVars:
+  #     - key: VITE_API_URL
+  #       sync: false
+  #   routes:
+  #     - type: rewrite
+  #       source: /*
+  #       destination: /index.html
