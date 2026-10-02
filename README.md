@@ -8,7 +8,9 @@ chosen time, and rewards completion with points and streaks.
 
 ## Status
 
-**Backend complete** — 36 tests passing. The React frontend is deliberately not built yet.
+**Backend complete** — 36 tests passing. The React frontend covers the first-agenda wizard
+(sign in → capture → plan → review → approve); the today dashboard and progress views are still to
+come.
 
 | Milestone | State |
 | --- | --- |
@@ -18,7 +20,7 @@ chosen time, and rewards completion with points and streaks.
 | M4 Delivery: SMTP / Twilio / Meta / console channels, dispatcher, scheduler + cron | ✅ |
 | M5 Gamification: streaks, missed-day penalties, bonuses, weekly rollup | ✅ |
 | M6 Hardening: tests, rate limits, logging, health checks, migrations | ✅ |
-| M7 Frontend: React + Vite + Tailwind | ⏳ not started |
+| M7 Frontend: React + Vite + Tailwind | 🚧 agenda wizard shipped |
 
 ## Quickstart (no credentials needed)
 
@@ -54,7 +56,7 @@ Full instructions, tests and deployment: [`docs/running.md`](docs/running.md).
 - **Agent & backend:** LangGraph + FastAPI (Python)
 - **LLM:** `nvidia/nemotron-3-ultra-550b-a55b` via NVIDIA NIM, structured output
 - **Database:** Render Postgres (async SQLAlchemy + Alembic); SQLite locally
-- **Frontend:** React + Vite + Tailwind CSS *(not built yet)*
+- **Frontend:** React + Vite + Tailwind CSS *(agenda wizard shipped)*
 - **Reminders:** APScheduler dispatcher in-process, Render Cron as a safety net
 - **Channels:** SMTP email, Twilio WhatsApp, Meta WhatsApp Cloud API, console fallback
 - **Hosting:** Render (`render.yaml`)
@@ -74,6 +76,10 @@ Full instructions, tests and deployment: [`docs/running.md`](docs/running.md).
 
 ## Next step
 
-Build the frontend (M7): auth screens, the agenda wizard (create → review the generated plan → edit
-→ approve), the today dashboard, and progress views. The API contract it needs is already frozen in
-[`docs/api-contract.md`](docs/api-contract.md).
+The first-agenda wizard (M7) is built and smoke-tested: sign in, capture an intention and deadline,
+watch the agent plan, answer its questions, review the drafted days, and approve. Run it with
+`npm run dev:all` from `apps/web`, or `npm run e2e:all` to drive the whole flow headless — see
+[`docs/running.md`](docs/running.md).
+
+What remains is the rest of the frontend: the today dashboard, to-do completion, and progress views.
+The API contract they need is already frozen in [`docs/api-contract.md`](docs/api-contract.md).

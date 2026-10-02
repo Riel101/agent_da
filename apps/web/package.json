@@ -1,0 +1,38 @@
+{
+  "name": "web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:all": "bash scripts/dev-all.sh",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "e2e": "node e2e/run.mjs",
+    "e2e:all": "node e2e/run.mjs all",
+    "e2e:capture": "node e2e/run.mjs capture",
+    "e2e:planning": "node e2e/run.mjs planning",
+    "e2e:failed": "node e2e/run.mjs failed",
+    "e2e:focus": "node e2e/run.mjs focus",
+    "e2e:snap": "node e2e/run.mjs snap"
+  },
+  "dependencies": {
+    "@fontsource-variable/archivo": "^5.3.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.4",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "oxlint": "^1.81.0",
+    "puppeteer-core": "^25.12.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0"
+  }
+}

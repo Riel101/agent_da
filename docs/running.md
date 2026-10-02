@@ -60,6 +60,44 @@ Useful endpoints:
 | `GET /readyz` | Database, scheduler jobs and next run times, channel configuration, pending reminders |
 | `GET /docs` | Interactive OpenAPI docs for all 38 routes |
 
+## Run the web app
+
+```bash
+cd apps/web
+npm install
+npm run dev:all
+```
+
+`dev:all` starts the API (`:8000`) and Vite (`:5173`) together — Ctrl-C stops both. It runs the API
+from `apps/api/.pylibs` unless a virtualenv with the dependencies is present. Override with
+`API_PORT`, `WEB_PORT`, `DATABASE_URL`, `AGENT_AUTOSTART`, `SCHEDULER_ENABLED`, or `DEV_PYTHON`.
+Then open http://localhost:5173 and sign in.
+
+To run the two servers by hand instead:
+
+```bash
+# terminal 1 — API
+cd apps/api
+PYTHONPATH=.pylibs SCHEDULER_ENABLED=false \
+  DATABASE_URL="sqlite+aiosqlite:///$(pwd)/agent_da.db" \
+  python3 -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+
+# terminal 2 — web
+cd apps/web && npm run dev
+```
+
+## Smoke-testing the web app
+
+```bash
+cd apps/web
+npm run e2e:all
+```
+
+Headless Chrome drives the first-agenda flow through every state, writes the screenshots to
+`.impeccable/review/`, and exits non-zero if a state does not render. It boots a throwaway API on its
+own SQLite file and starts Vite when one is not already running. See `apps/web/e2e/README.md` for the
+phases, environment variables, and the URL-detector step.
+
 ## See the whole product work
 
 ```bash
@@ -96,6 +134,8 @@ penalties.
 
 The suite configures its environment before importing the app (see `tests/conftest.py`) and uses a
 file-backed SQLite database under `/tmp/opencode/`.
+
+The frontend has no unit suite; it is covered by the browser smoke harness above (`npm run e2e:all`).
 
 ## Environment notes
 
