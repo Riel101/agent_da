@@ -220,7 +220,10 @@ export function createApi(base = config.api) {
 
 /* ------------------------------------------------------------ page capture */
 
-const urlFor = (agendaId) => `${config.web}/new${agendaId ? `?agenda=${agendaId}` : ''}`
+const urlFor = (route, agendaId) =>
+  agendaId
+    ? `${config.web}${route}${route.includes('?') ? '&' : '?'}agenda=${agendaId}`
+    : `${config.web}${route}`
 
 async function settlePage(page) {
   await page.evaluate(() => document.fonts.ready)
@@ -232,7 +235,7 @@ async function settlePage(page) {
 }
 
 /** Open the card with an injected session and a settled layout. */
-async function openCard(browser, { session, expect, agendaId = null, width, height, mobile }) {
+async function openCard(browser, { session, expect, route = '/new', agendaId = null, width, height, mobile }) {
   const page = await browser.newPage()
   await page.setViewport({ width, height, deviceScaleFactor: mobile ? 2 : 1, isMobile: mobile, hasTouch: mobile })
   if (session) {
@@ -240,7 +243,7 @@ async function openCard(browser, { session, expect, agendaId = null, width, heig
       localStorage.setItem('agentda.auth', JSON.stringify(payload))
     }, session)
   }
-  await page.goto(urlFor(agendaId), { waitUntil: 'load' })
+  await page.goto(urlFor(route, agendaId), { waitUntil: 'load' })
   await page.waitForSelector(expect, { timeout: 30_000 })
   await settlePage(page)
   return page
@@ -249,9 +252,9 @@ async function openCard(browser, { session, expect, agendaId = null, width, heig
 /** Screenshot one card state, optionally running a probe first. */
 export async function shot(
   browser,
-  { name, session, expect, agendaId = null, width = 1440, height = 900, mobile = false, settle = 900, fullPage = true, probe },
+  { name, session, expect, route = '/new', agendaId = null, width = 1440, height = 900, mobile = false, settle = 900, fullPage = true, probe },
 ) {
-  const page = await openCard(browser, { session, expect, agendaId, width, height, mobile })
+  const page = await openCard(browser, { session, expect, route, agendaId, width, height, mobile })
   await sleep(settle)
   if (probe) await probe(page)
   await page.screenshot({ path: path.join(config.out, `${name}.png`), fullPage })
@@ -262,9 +265,9 @@ export async function shot(
 /** Dump a settled page as self-contained HTML for the URL detector. */
 export async function dumpHtml(
   browser,
-  { name, session, expect, agendaId = null, width = 1440, height = 900, mobile = false },
+  { name, session, expect, route = '/new', agendaId = null, width = 1440, height = 900, mobile = false },
 ) {
-  const page = await openCard(browser, { session, expect, agendaId, width, height, mobile })
+  const page = await openCard(browser, { session, expect, route, agendaId, width, height, mobile })
   await sleep(1200)
   const html = await page.content()
   await fs.writeFile(path.join(config.snap, `${name}.html`), html, 'utf8')
@@ -274,16 +277,12 @@ export async function dumpHtml(
 
 /* --------------------------------------------------------------- page probes */
 
-/** How many plotted points the route profile currently draws. */
-export function profilePointCount(page) {
-  return page.evaluate(() => {
-    const path = document.querySelector('[data-testid="profile"] svg path')
-    if (!path) return 0
-    return ((path.getAttribute('d') ?? '').match(/[ML]/g) ?? []).length
-  })
+/** How many day ticks the plan timeline currently draws. */
+export function timelineTickCount(page) {
+  return page.evaluate(() => document.querySelectorAll('[data-testid="timeline"] [data-tick]').length)
 }
 
-/** The header band's state word (NEW, UNDER SURVEY, …). */
+/** The status badge's word (Draft, Planning, Ready to review, …). */
 export function cardState(page) {
-  return page.evaluate(() => document.querySelector('[data-testid="card-state"]')?.textContent?.trim() ?? '')
+  return page.evaluate(() => document.querySelector('[data-testid="status"]')?.textContent?.trim() ?? '')
 }

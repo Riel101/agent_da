@@ -55,7 +55,8 @@ The mechanism a neighboring habit or planning app could not truthfully copy:
   that day's to-dos, and is delivered over email (SMTP) or WhatsApp (Twilio preferred, Meta Cloud
   API fallback, console when neither is configured).
 - A weekly rollup is sent each Sunday in the user's local time, summarising points earned,
-  completion rate and the current streak.
+  completion rate and the current streak. It is that day's only reminder — it also carries the
+  Sunday's focus and to-dos — so every day of a plan delivers exactly one message.
 - The flow is human-in-the-loop: create the agenda → generate → optionally answer clarifying
   questions → review the generated plan → edit days and to-dos → approve → the agenda goes active
   and reminders are scheduled.
@@ -81,15 +82,17 @@ Confirmed functionality and rules:
 - Explicit v1 non-goals: native mobile app, multi-user collaboration, push notifications, calendar
   sync, voice, and payment tiers.
 
-Frontend (milestone M7) is **not built yet**. Its stack is already fixed by the project: React + Vite
-+ Tailwind CSS in `apps/web`, a static Render site, talking to the frozen REST contract in
+Frontend (milestone M7): the auth screens, the first-agenda wizard and the plan index are built; the
+today dashboard and the progress views are not. Its stack is fixed by the project: React + Vite +
+Tailwind CSS in `apps/web`, a static Render site, talking to the frozen REST contract in
 `docs/api-contract.md`. No SSE endpoint exists, so plan generation is polled via
-`GET /agendas/{id}/draft`. The planned surface is auth screens, the agenda wizard (create → review
-the generated plan → edit → approve), the today dashboard, and progress views.
+`GET /agendas/{id}/draft`.
 
 Frontend product behaviour decided during this init:
 
 - **First run:** a guided first-agenda wizard, not a bare create form.
+- **Plan index:** every plan the account has created, newest first, filterable by status, each row
+  opening that plan in the wizard. The wizard is the only place a plan is edited.
 - **Dashboard:** tabs showing one agenda at a time, not a stacked list of all agendas.
 - **Editing a day:** changing a day's title or description leaves that day's to-dos as they are; the
   app does not regenerate them automatically.

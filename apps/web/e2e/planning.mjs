@@ -1,9 +1,9 @@
 /**
- * Phase: `planning` — the card under survey, before the draft lands.
+ * Phase: `planning` — the card mid-generation, before the draft lands.
  *
  * Requires AGENT_AUTOSTART=false so /generate only queues the draft.
  */
-import { cardState, profilePointCount, shot } from './harness.mjs'
+import { cardState, timelineTickCount, shot } from './harness.mjs'
 
 export const autostart = false
 
@@ -27,11 +27,11 @@ export async function run({ browser, api, checks }) {
     height: 900,
     session: holder.session,
     agendaId: agenda.id,
-    expect: '::-p-text(Under survey)',
+    expect: '::-p-text(Generating your plan)',
     settle: 900,
     probe: async (page) => {
-      checks.ok((await profilePointCount(page)) >= 2, 'planning: the provisional profile drew fewer than 2 points')
-      checks.contains(await cardState(page), 'UNDER SURVEY', 'planning: card is not in the UNDER SURVEY state')
+      checks.ok((await timelineTickCount(page)) >= 2, 'planning: the provisional profile drew fewer than 2 points')
+      checks.contains(await cardState(page), 'Planning', 'planning: card is not in the Planning state')
     },
   })
 }

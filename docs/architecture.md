@@ -81,7 +81,8 @@ agent_da/
 │  └─ api/                          # FastAPI + LangGraph  (built)
 │     ├─ app/
 │     │  ├─ main.py                 # app factory, lifespan, scheduler start/stop
-│     │  ├─ cli.py                  # dispatch | materialize | day-close | demo
+│     │  ├─ cli.py                  # dispatch | materialize | day-close | demo | reminders | send-test | mail-catcher
+│     │  ├─ dev/                    # development-only helpers (local SMTP catcher)
 │     │  ├─ core/                   # config, security, deps, errors, logging, ratelimit, timezones
 │     │  ├─ db/                     # base mixins, async engine/session
 │     │  ├─ models/                 # user, agenda, sub_agenda, points, reminder (+ enums)
@@ -186,7 +187,8 @@ resumed graph runs cannot double-award. Un-completing appends compensating negat
 `users.points_balance` is a cached sum, refreshable with `points_service.reconcile_user`.
 
 **Weekly rollup.** Each Sunday (user-local) the agent summarises points earned, completion rate and
-the streak, and sends it through the same channel.
+the streak, and sends it through the same channel. The rollup is the *only* reminder that day: it
+also carries the Sunday's focus and to-dos, so a plan delivers exactly one message per day.
 
 ## 7. Reminder message shape
 
@@ -213,8 +215,8 @@ free-form for email.
   inside the app; `SCHEDULER_ENABLED=true` on exactly one instance.
 - **Postgres**: managed instance, `DATABASE_URL` injected.
 - **Cron Job (safety net)**: `*/5 * * * *` → `python -m app.cli dispatch`, in case the in-process
-  scheduler stalls during a deploy. A second hourly cron runs `python -m app.cli day-close` so
-  missed-day penalties and streaks are applied even mid-deploy.
+  scheduler stalls during a deploy. It is dispatch-only; day-close, materialisation and the weekly
+  rollup stay in-process, and every job is idempotent, so a cron miss is never fatal.
 - **Static site / Node service**: the Vite build for `apps/web` (`VITE_API_URL` at build time).
 - Migrations run on release (`alembic upgrade head`) before the new instance goes live.
 

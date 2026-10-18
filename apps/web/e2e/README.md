@@ -1,12 +1,13 @@
 # Web smoke harness
 
-Drives the first-agenda flow through a real headless Chrome against a live API
-and Vite. It proves the card renders in every state, writes the screenshots the
-review loop reads, and fails loudly when a state does not appear.
+Drives the first-agenda flow and the plan index through a real headless Chrome
+against a live API and Vite. It proves the wizard renders in every state and the
+index lists what the account has created, writes the screenshots the review loop
+reads, and fails loudly when a state does not appear.
 
-It is a **smoke test**, not a pixel test: assertions check that the card is in
-the right state and that the route profile actually drew, not that any pixel is
-a particular colour.
+It is a **smoke test**, not a pixel test: assertions check that a state is the
+right state and that the plan timeline actually drew, not that any pixel is a
+particular colour.
 
 ## One command
 
@@ -23,7 +24,8 @@ Individual phases:
 
 ```bash
 npm run e2e:capture    # desktop, review, clarify, mobile, approved, …
-npm run e2e:planning   # the card under survey (needs AGENT_AUTOSTART=false)
+npm run e2e:plans      # the plan index: populated, filtered, empty
+npm run e2e:planning   # the card mid-generation (needs AGENT_AUTOSTART=false)
 npm run e2e:failed     # the failure notice
 npm run e2e:focus      # keyboard-focus states
 npm run e2e:snap       # HTML snapshots for the URL detector
@@ -70,7 +72,8 @@ autostarts, run that phase with a managed server instead.
 
 - Screenshots: `.impeccable/review/*.png` — `desktop`, `mobile`, `planning`,
   `clarify`, `review`, `review-top`, `mobile-review`, `mobile-review-top`,
-  `approved`, `failed`, `focus-field`, `focus-tab`.
+  `approved`, `failed`, `focus-field`, `focus-tab`, `plans`, `plans-filtered`,
+  `plans-mobile`, `plans-empty`.
 - HTML snapshots: `E2E_SNAP/*.html` — `capture`, `capture-mobile`, `review`,
   `review-mobile`.
 
@@ -87,7 +90,8 @@ python3 -m http.server 8788 --directory "$E2E_SNAP"
 | --- | --- |
 | `harness.mjs` | Config, Chrome lookup, API client, `shot`/`dumpHtml`, probes |
 | `capture.mjs` | The happy path, as one growing sheet |
-| `planning.mjs` | Under survey, before the draft lands |
+| `plans.mjs` | The plan index: populated, filtered, mobile and empty |
+| `planning.mjs` | Mid-generation, before the draft lands |
 | `failed.mjs` | Flips the draft row to `failed` and captures the notice |
 | `focus.mjs` | The two keyboard-focus states |
 | `snap.mjs` | HTML snapshots for the detector |

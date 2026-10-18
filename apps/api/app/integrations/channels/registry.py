@@ -51,6 +51,16 @@ def resolve_sender(channel: ReminderChannel) -> ChannelSender:
     return email_sender()
 
 
+def delivers_for_real(channel: ReminderChannel) -> bool:
+    """Whether this channel can reach a human right now.
+
+    ``False`` means every send is being logged and dropped: the console sink is
+    the resolved sender because no provider credentials are configured.
+    """
+    sender = resolve_sender(channel)
+    return bool(getattr(sender, "delivers", True))
+
+
 async def deliver(channel: ReminderChannel, message: OutboundMessage) -> DeliveryResult:
     """Send via the preferred channel, then fall back to email when allowed."""
     sender = resolve_sender(channel)

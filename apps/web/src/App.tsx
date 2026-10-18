@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 
 import NewAgenda from './NewAgenda'
+import Plans from './Plans'
 import SignIn from './SignIn'
 import { useAuth } from './lib/auth'
 
@@ -10,7 +11,13 @@ export default function App() {
   if (status === 'loading') {
     return (
       <div className="flex min-h-screen items-center justify-center bg-ground">
-        <p className="text-[12px] font-semibold tracking-[0.2em] text-sheet/50 uppercase">Checking your card…</p>
+        <div className="flex items-center gap-3 text-steel-ghost">
+          <span
+            aria-hidden
+            className="h-4 w-4 animate-spin rounded-full border-2 border-ground-line border-t-hivis"
+          />
+          <span className="text-[13px]">Loading…</span>
+        </div>
       </div>
     )
   }
@@ -19,9 +26,10 @@ export default function App() {
 
   return (
     <Routes>
-      <Route path="/signin" element={signedIn ? <Navigate to="/new" replace /> : <SignIn />} />
+      <Route path="/signin" element={signedIn ? <Navigate to="/plans" replace /> : <SignIn />} />
+      <Route path="/plans" element={signedIn ? <Plans /> : <Navigate to="/signin" replace />} />
       <Route path="/new" element={signedIn ? <NewAgenda /> : <Navigate to="/signin" replace />} />
-      <Route path="*" element={<Navigate to={signedIn ? '/new' : '/signin'} replace />} />
+      <Route path="*" element={<Navigate to={signedIn ? '/plans' : '/signin'} replace />} />
     </Routes>
   )
 }

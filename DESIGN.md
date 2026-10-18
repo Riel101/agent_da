@@ -1,39 +1,43 @@
 ---
-name: AgentDa — The Route Card
-description: A lit waxed route card on a deep slate ground; each deadline is a turn-around time and every day a camp.
+name: AgentDa — Clean Slate
+description: A conventional dark application on a slate canvas; one panel whose body and footer change with the plan's state, a plain deadline timeline, and an index of every plan as hairline rows.
 colors:
-  # primary — the rationed signal
+  # primary — the one rationed accent
   hivis: "#ff5a1f"
   hivis-deep: "#c63c08"
-  # secondary — the profile chart's steel
+  # secondary — the quiet chrome
   steel: "#2f4a5a"
+  steel-soft: "#55707f"
   steel-ghost: "#9fb2bd"
   # tertiary — a flagged problem
   fault: "#b23a2a"
-  # neutral — the slate ground and the waxed sheet
+  danger: "#ff6b52"
+  # neutral — the canvas, the panels, the text
   ground: "#0e1a24"
+  ground-raised: "#16232e"
+  elevated: "#1b2836"
   ground-line: "#24343f"
   sheet: "#f2f4f0"
-  sheet-recess: "#e5eae4"
-  sheet-rule: "#c6cfc6"
-  sheet-rule-soft: "#d8ded6"
   ink: "#16222c"
   ink-soft: "#46545e"
   ink-faint: "#5c6a74"
+  sheet-recess: "#e5eae4"
+  sheet-rule: "#c6cfc6"
+  sheet-rule-soft: "#d8ded6"
 typography:
   display:
     fontFamily: "Archivo Variable, Archivo, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "1.5rem (1.875rem at ≥640px)"
+    fontSize: "1.375rem (1.625rem at ≥640px)"
     fontWeight: 600
     lineHeight: 1.15
     letterSpacing: "normal"
-    fontVariation: "'wdth' 88"
+    fontVariation: "normal"
+    textWrap: "balance"
   headline:
     fontFamily: "Archivo Variable, Archivo, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "1.3125rem (1.625rem at ≥640px)"
+    fontSize: "1.0625rem (1.1875rem at ≥640px)"
     fontWeight: 600
-    lineHeight: 1.25
-    fontVariation: "'wdth' 88"
+    lineHeight: 1.3
   title:
     fontFamily: "Archivo Variable, Archivo, ui-sans-serif, system-ui, sans-serif"
     fontSize: "0.9375rem"
@@ -43,254 +47,250 @@ typography:
     fontFamily: "Archivo Variable, Archivo, ui-sans-serif, system-ui, sans-serif"
     fontSize: "0.9375rem"
     fontWeight: 400
-    lineHeight: 1.625
+    lineHeight: 1.6
   caption:
     fontFamily: "Archivo Variable, Archivo, ui-sans-serif, system-ui, sans-serif"
     fontSize: "0.78125rem"
     fontWeight: 400
-    lineHeight: 1.375
+    lineHeight: 1.4
     fontFeature: "'tnum' 1"
   label:
     fontFamily: "Archivo Variable, Archivo, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "0.6875rem"
-    fontWeight: 600
-    lineHeight: 1
-    letterSpacing: "0.16em"
-    fontVariation: "'wdth' 88"
+    fontSize: "0.8125rem"
+    fontWeight: 500
+    lineHeight: 1.2
+    letterSpacing: "normal"
+    fontVariation: "normal"
 rounded:
-  sheet: "0px"
-  tab: "2px"
-  punch: "999px"
+  field: "6px"
+  button: "6px"
+  alert: "8px"
+  card: "12px"
+  pill: "999px"
 spacing:
   hairline: "1px"
   xs: "4px"
-  sm: "6px"
-  md: "8px"
-  lg: "10px"
-  xl: "12px"
-  "2xl": "16px"
-  "3xl": "20px"
-  "4xl": "24px"
+  sm: "8px"
+  md: "12px"
+  lg: "16px"
+  xl: "20px"
+  "2xl": "24px"
+  column: "720px"
 components:
-  label:
-    textColor: "{colors.ink-faint}"
-    typography: "{typography.label}"
-  punch-tab:
+  field:
+    backgroundColor: "{colors.elevated}"
+    textColor: "{colors.sheet}"
+    borderColor: "{colors.ground-line}"
+    rounded: "{rounded.field}"
+    padding: "0.5rem 0.7rem"
+  field-focus:
+    borderColor: "{colors.hivis}"
+    ring: "0 0 0 3px rgb(255 90 31 / 0.16)"
+  inline-field:
+    backgroundColor: "transparent"
+    textColor: "{colors.sheet}"
+    rounded: "{rounded.field}"
+    padding: "0.25rem 0.5rem"
+  button:
+    rounded: "{rounded.button}"
+    padding: "0.5rem 1rem"
+    height: "2.5rem"
+  button-primary:
     backgroundColor: "{colors.hivis}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.tab}"
-    padding: "0.6rem 1.5rem"
-    height: "2.75rem"
-  punch-tab-hover:
+  button-primary-hover:
     backgroundColor: "{colors.hivis-deep}"
     textColor: "#ffffff"
-    rounded: "{rounded.tab}"
-  punch-tab-disabled:
-    backgroundColor: "{colors.sheet-rule}"
-    textColor: "{colors.ink-faint}"
-    rounded: "{rounded.tab}"
-  edge-tab:
+  button-secondary:
     backgroundColor: "transparent"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.tab}"
-    padding: "0.55rem 1.4rem"
-    height: "2.5rem"
-  edge-tab-hover:
-    backgroundColor: "{colors.ink}"
     textColor: "{colors.sheet}"
-    rounded: "{rounded.tab}"
-  line-input:
+    borderColor: "{colors.ground-line}"
+  button-ghost:
     backgroundColor: "transparent"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.sheet}"
-    padding: "0.35rem 0 0.45rem"
-  route-card:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.sheet}"
-    width: "760px"
-  route-card-band:
-    backgroundColor: "{colors.steel}"
-    textColor: "{colors.sheet}"
-    padding: "10px 16px"
-  route-card-footer:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
-    padding: "16px"
-  date-strip:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink-soft}"
-    padding: "10px 0"
-  notice:
-    backgroundColor: "{colors.sheet-recess}"
-    textColor: "{colors.ink-soft}"
-    padding: "10px 12px"
+    textColor: "{colors.steel-ghost}"
+  button-danger:
+    backgroundColor: "transparent"
+    textColor: "{colors.danger}"
+    borderColor: "rgb(255 107 82 / 0.45)"
+  card:
+    backgroundColor: "{colors.ground-raised}"
+    borderColor: "{colors.ground-line}"
+    rounded: "{rounded.card}"
+  badge:
+    rounded: "{rounded.pill}"
+    padding: "0.125rem 0.625rem"
+  alert:
+    backgroundColor: "{colors.elevated}"
+    borderColor: "{colors.ground-line}"
+    rounded: "{rounded.alert}"
+    padding: "0.75rem 0.875rem"
   field-row:
-    textColor: "{colors.ink}"
-    padding: "8px 0"
-  punch:
-    backgroundColor: "{colors.sheet-recess}"
-    rounded: "{rounded.punch}"
-    size: "0.6rem"
-  stamp:
-    textColor: "{colors.ink}"
-    rounded: "{rounded.sheet}"
-    padding: "4px 8px"
+    textColor: "{colors.sheet}"
+    borderColor: "{colors.ground-line}"
+    padding: "0.625rem 0"
+  plan-row:
+    backgroundColor: "transparent"
+    textColor: "{colors.sheet}"
+    borderColor: "{colors.ground-line}"
+    padding: "1rem 0"
 ---
 
-# Design System: AgentDa — The Route Card
+# Design System: AgentDa — Clean Slate
 
 ## Overview
 
-**Creative North Star: "The Route Card"**
+**Creative North Star: "Clean Slate"**
 
-A lit waxed route card lying on a deep slate table. The whole surface is one printed sheet that grows through five states — capture, planning, clarify, review, approved — rather than five screens or a progress-dot stepper. The card is the interface: its steel header band states what the sheet is and where it stands, its objective is a large inked line, its deadline is a dashed hi-vis turn-around rule at the profile's summit, and its single primary action is a punched tab at the foot.
+A conventional dark application. Both surfaces are one centred panel on a slate canvas. The wizard swaps its body and footer with the plan's state — capture, planning, clarify, review, approved, and a failure case — while the frame around it stays put: a slim top bar, a labelled step path, a thin progress bar, the goal, and a plain timeline of days. The plan index is one row per plan on the same kind of panel, divided by hairlines, each row carrying the plan's status, its dates, and how far along it is. There is no card deck, no metaphor, and nothing that needs a diagram to explain.
 
-The character is industrial signage and outfitter's paperwork: printed rules, punched camps, folded tags, tabular figures. Color is two materials and one signal — a dark slate ground, a waxed sheet, and a rationed hi-vis orange that belongs only to the turn-around rule and the one action, because its rarity is what carries the deadline. Type is a single grotesque on a width axis; the condensed cut reads as stencilled camp markers and printed labels, never as a second voice.
+The first surface's palette is kept and re-cast. The slate ground `#0e1a24` stops being a tabletop and becomes the canvas itself; panels rest on it as `#16232e` surfaces with `#24343f` hairlines; sheet `#f2f4f0` becomes the primary text and steel-ghost `#9fb2bd` the muted tier. Hi-vis orange `#ff5a1f` survives as the single rationed accent — the one primary action, the focus ring, the active step, and the deadline — and ink `#16222c` is the text that sits on it. Archivo is kept at its normal width on one scale, in sentence case; the condensed cut is gone.
 
-Depth is material, not decorative. The sheet is the only lifted object; the ground is flat. Confirmed visual rejections: no points or streaks drawn as ornaments, no progress dots, no confetti, no "you've got this" gradients or glass, and nothing of the cream-and-serif calming-coach aesthetic.
-
-**Key Characteristics:**
-- One printed sheet, ~760px, centred on a deep slate ground.
-- Two materials (slate ground / waxed sheet) plus one rationed hi-vis signal.
-- A single family, Archivo, used on a `wdth` axis; condensed for labels and camp markers.
-- Depth from one deep sheet shadow and tonal layering, plus a punched-hole inset.
-- Controls are ruled card fields and punched tabs; never pills, boxes, or switches.
-- Tabular figures everywhere a date, time, or count appears.
+Depth is hairlines and tonal surfaces. There is no sheet shadow and no ornament: panels are separated from the canvas by a 1px line and a slightly lighter fill. Every rejection from the first world is honoured — no camps, no summit or turnaround, no route card, no elevation chart, no stamp, no punched tabs, no tracked uppercase labels — and the progress-dot stepper ban is deliberately lifted: this build states where the visitor is with a labelled step path and a progress bar, the ordinary way.
 
 ## Colors
 
-Two printed materials and one rationed signal: a dark slate ground, a waxed sheet, and an orange reserved for the deadline.
+The palette is the incumbent one, so it carries the product's history; its **roles** are new. Three families: the slate canvas and its panels, the light text scale, and the rationed orange. Steel is the quiet chrome in between.
 
 ### Primary
-- **Turnaround Hi-Vis** (`#ff5a1f`): the turn-around rule and the single primary action (`.punch-tab`). It also owns the text-selection fill and a marked punch. It appears nowhere else.
-- **Hi-Vis Deep** (`#c63c08`): the darker cut of the signal, used whenever the orange must sit as *type* or as a hairline on the sheet — the end-date figure, the `TURNAROUND` label, the "Summit lands on…" line, the approved stamp, and focus rings — and as the primary action's hover.
+
+- **Hi-Vis Orange** (`#ff5a1f`): the single accent. Primary button fills, the focus ring, the active step, the progress bar, the deadline tick and label, and links that are truly actions. Ink `#16222c` is its foreground — 5.2:1, so the primary action is legible.
+- **Hi-Vis Deep** (`#c63c08`): the primary button's hover fill only. It is never used as type on the dark ground (2.0:1) and never as a second accent.
 
 ### Secondary
-- **Route Steel** (`#2f4a5a`): the card's header band and the elevation profile's path and camps; the profile's material.
-- **Steel Ghost** (`#9fb2bd`): the profile's perforated rail, the tick marks, and the `⋯` elision in the date strip.
+
+- **Steel** (`#2f4a5a`): a completed step's chip in the step path.
+- **Steel Soft** (`#55707f`): hairline-weight tick marks and the field's hover border. Never body text on the ground (3.2:1).
+- **Steel Ghost** (`#9fb2bd`): the muted text tier — field labels, hints, captions, prose body on the canvas (7.6:1). This is the default secondary text colour; it is a light tint of the canvas's own hue, never neutral gray.
 
 ### Tertiary
-- **Flagged Rust** (`#b23a2a`): a flagged problem — error prose, error borders, and the armed state of a destructive confirm.
+
+- **Fault** (`#b23a2a`): retained for fault surfaces and 1px danger borders.
+- **Danger** (`#ff6b52`): the fault hue's *text* tint for the dark ground (6.3:1) — error prose, danger badges, the armed confirm button.
 
 ### Neutral
-- **Deep Slate Ground** (`#0e1a24`): the page background; the table the card is lit on.
-- **Ground Line** (`#24343f`): the top bar's hairline divider on the ground.
-- **Waxed Sheet** (`#f2f4f0`): the card stock, and the body color when type sits on the ground.
-- **Sheet Recess** (`#e5eae4`): the shaded fill — notices, the selected camp row, the selected channel, and the punched hole's interior.
-- **Sheet Rule** (`#c6cfc6`): input underlines, punch outlines, disabled plates, and the preset-chip borders.
-- **Sheet Rule Soft** (`#d8ded6`): the faint rules that separate rows and bound the date strip.
-- **Carbon Ink** (`#16222c`): the sheet's text, its outlines, and its filled controls.
-- **Ink Soft** (`#46545e`): secondary prose.
-- **Ink Faint** (`#5c6a74`): printed labels, hints, and meta.
+
+- **Deep Slate Ground** (`#0e1a24`): the page canvas.
+- **Ground Raised** (`#16232e`): the panel, and the inline field's hover/focus fill.
+- **Elevated** (`#1b2836`): standard text fields, badges, and alert fills — one step above the panel.
+- **Ground Line** (`#24343f`): every hairline — panel border, dividers, the timeline track, the progress track.
+- **Waxed Sheet** (`#f2f4f0`): primary text on the canvas (15.4:1), and the focus ring on the primary button.
+- **Carbon Ink** (`#16222c`): text on hi-vis fills, the caret, and the text selection background's foreground.
+
+`ink-soft`, `ink-faint`, `sheet-recess`, `sheet-rule`, and `sheet-rule-soft` remain in the theme so the palette is not fragmented, but the dark system draws on `ground-raised` and `elevated` for surfaces and `steel-ghost` for muted text; they are not part of the current surface vocabulary.
 
 ### Named Rules
-**The Rationed Hi-Vis Rule.** Hi-vis orange (`#ff5a1f`) appears only on the turn-around rule and the single primary action. When orange must be read as type on the sheet, use Hi-Vis Deep (`#c63c08`). The orange is never a second accent, chrome, or decoration.
 
-**The Two-Material Rule.** Every surface is either the slate ground or the waxed sheet. There is no third surface tone; recess and rule tints of the sheet carry every subordinate zone.
+**The One Accent Rule.** Hi-vis orange is the only accent and it is rationed: the primary action, the focus ring, the active step, the deadline, and the progress bar. Nothing else may be orange — not headings, not borders, not a second button. Its scarcity is what makes it read as signal.
+
+**The Tinted-Muted Rule.** Muted text on the canvas is always steel-ghost — a light tint of the canvas's own hue. Neutral gray is never introduced, and `steel-soft` never carries body text.
+
+**The Tonal-Surface Rule.** Surfaces are three values of one slate: canvas, panel, elevated. There is no fourth, and no surface is coloured except a hi-vis or danger tint at ≤10%.
 
 ## Typography
 
-**Display Font:** Archivo Variable (with Archivo, ui-sans-serif, system-ui, sans-serif)
-**Body Font:** Archivo Variable (same family)
-**Label Font:** the condensed cut of the same family (`font-stretch: 88%`)
-
-**Character:** One grotesque, self-hosted, with a real `wdth` axis. Its condensed cut is the whole labeling voice — short, stencilled, slightly industrial. Dates, counts, and times are set in tabular figures so the deadline arithmetic never jitters as it recomputes.
+One family, **Archivo Variable**, at its normal width, on a single tight scale. There is no condensed cut and no uppercase tracking; hierarchy comes from size and weight. Full sentences, sentence case, everywhere.
 
 ### Hierarchy
-- **Display** (600, 1.5rem → 1.875rem at ≥640px, line-height 1.15, `wdth` 88): the objective as a printed headline. Wraps with `text-balance`; never clips.
-- **Headline** (600, 1.3125rem → 1.625rem at ≥640px, line-height 1.25, `wdth` 88): the objective while it is being typed, as an auto-growing ruled line.
-- **Title** (600, 0.9375rem, line-height 1.375): a camp's own name in the editable list.
-- **Body** (400, 0.9375rem, line-height 1.625): panel prose and the finish line; measure capped at 54–68ch.
-- **Caption** (400, 0.78125rem, tabular figures): hints, counts, metadata, and the date strip.
-- **Label** (600, 0.6875rem, letter-spacing 0.16em, uppercase, `wdth` 88): printed field and band labels, stamps, and camp `D<n>` markers.
+
+- **Display** (600, `1.375rem` → `1.625rem` at ≥640px, lh 1.15, `text-wrap: balance`): the goal as a heading, and the sign-in title. The only large type in the flow.
+- **Headline** (600, `1.0625rem` → `1.1875rem`): the goal while it is being typed, as a bordered field rather than a ruled line.
+- **Title** (600, `0.9375rem`): section headings, day titles, question prompts.
+- **Body** (400, `0.9375rem` / `0.875rem`, lh 1.6): panel prose, capped at 62–68ch.
+- **Caption** (400, `0.78125rem`, tabular figures): hints, counts, day dates, the step path.
+- **Label** (500, `0.8125rem`): field labels and metadata. Normal width, normal tracking, sentence case.
 
 ### Named Rules
-**The One Family Rule.** Archivo is the only family. Emphasis comes from weight and the width axis, never from a second face or a display replacement.
 
-**The Condensed Print Rule.** Anything printed as a label, stamp, or camp marker is set in the condensed cut (`font-stretch: 88%`) at 11px with wide tracking. The label voice is never rendered in the normal width.
+**The One Family Rule.** Archivo is the only family. Emphasis is weight, never a second face.
+
+**The Sentence-Case Rule.** Nothing is set in uppercase with tracking — not labels, not buttons, not badges. The stencilled voice of the first world is retired.
+
+**The Tabular Rule.** Every date, time, count, and duration uses tabular figures, so the deadline arithmetic reads cleanly down a column.
 
 ## Layout
 
-A single centred sheet on an open slate ground. The card is one column capped at `760px`; the sign-in sheet is the same pattern capped at `440px`; the top bar shares the `760px` container. Page gutters are `12px`, rising to `24px` at ≥640px; the card's own padding is `16px`, rising to `24px` at ≥640px, with a `20px` top pad before the objective.
+A `720px` column centred with `16px` gutters (`24px` at ≥640px), beginning `32px` below the top bar (`48px` at ≥640px) and ending with `96px` of breathing room. The top bar is full-bleed, one hairline tall, with the wordmark and the two places you can be — *Plans* and *New plan*, the current one on an `elevated` chip — left, and the signed-in address plus *Sign out* right.
 
-Within the card the order is fixed: steel header band → objective heading → full-bleed elevation profile → printed date strip → the phase panel → a hairline rule → the footer. Two-up field groups split `1.35fr / 1fr` at ≥640px (Length beside Start; channel beside At + zone) and stack below it. Preset-length chips wrap.
+Inside the column, top to bottom: the step path and progress bar, then one panel. The panel's first zone holds the goal and the timeline; a hairline divides it from the body; the body is the phase's content; a second hairline divides it from the footer, which always holds the phase's action. Sections inside the body are separated by `24px`. The sign-in surface is a single `420px` column with one panel.
 
-The profile is the responsive pivot: at ≥640px it runs horizontally across the card, and below `640px` it rotates to a vertical ascent (the same `max-width: 640px` media query drives both this and the narrow flag). Body measures are capped so prose never spans the sheet: `54ch` under the objective, `56ch` in panels, `68ch` for notes and guidance, `42ch` on the sign-in card.
+The plan index reuses the column and the top bar without the step path: the title and the plan count with one primary *New plan*, a row of status filters, then one panel of plan rows divided by hairlines, and a *Load more* button under the panel while the account has more plans than the page holds.
 
-The rhythm is a 4px base: hairline `1px` rules, `4–6px` micro-gaps, `8–10px` inside a group, `16–24px` between groups. The bottom padding is generous (`96px`) so the card sits on the table rather than the viewport edge.
+### Named Rules
+
+**The One Panel Rule.** Each surface is one panel. The flow's panel changes its body and footer; the index's panel is a list of hairline rows. Neither becomes multiple cards, a deck, or a wizard of separate pages.
+
+**The Step-Path Rule.** Where the visitor is is stated by a labelled path (`Details · Plan · Review · Done`) plus a thin bar — ordinary and readable — not by an unlabelled dot row.
 
 ## Elevation & Depth
 
-Depth is material and hybrid rather than decorative. The ground is flat and shadowless; the sheet is the only lifted object, casting a single deep, offset, soft shadow that reads as a card resting on a table. Subordination inside the sheet is tonal (Sheet Recess), and the punched hole is rendered as a shallow inset so it reads as removed material. Focus and selection are stated as flat rules — a Hi-Vis Deep line on focus, a hi-vis fill on selection — never as glows.
-
-### Shadow Vocabulary
-- **Sheet lift** (`box-shadow: 0 28px 70px -28px rgba(0, 0, 0, 0.75)`): the route card and the sign-in sheet — the only shadow in the system.
-- **Punch inset** (`box-shadow: inset 0 1px 0 rgb(22 34 44 / 0.18)`): a camp's punched hole, so the recess reads as depth.
-- **Focus rule** (`box-shadow: 0 1px 0 0 #c63c08`): a ruled input on focus doubles its underline in Hi-Vis Deep instead of glowing.
+Depth is flat and material. One hairline plus one tonal step is the entire vocabulary: a panel is `ground-raised` behind a `ground-line` border on the `ground` canvas, and a field or badge is `elevated`. There is a single recessed treatment — the focus ring on a field (`0 0 0 3px rgb(255 90 31 / 0.16)`) — and no drop shadow anywhere in the flow. The sign-in panel does not float.
 
 ### Named Rules
-**The One Shadow Rule.** The sheet casts one deep shadow; nothing else in the flow casts one. Depth on the ground is achieved by tonal separation, not by adding shadows to more elements.
+
+**The No-Shadow Rule.** Nothing in the flow casts a shadow. Separation is a hairline and a tonal step, nothing more.
+
+**The Hairline Rule.** Every separator is exactly `1px` of `ground-line`. Bolder lines do not exist; a heavier emphasis is a fill, not a thicker border.
 
 ## Shapes
 
-The form language is square and punched. Corners are square (radius `0`) or at most a `2px` tab; the only true curves are circles — the punched hole (`0.6rem`, radius `999px`) and the small ringed end-holes on an edge tab. There are no pills and no switches. A printed tag is cut at its top-right corner (a `10px` `clip-path` notch) and carries a shaded fold flap rendered as a 45° `currentColor` gradient. The card's silhouette is a plain rectangle, and its steel header band is a full-bleed rectangle.
+Corners are small and consistent: `6px` for fields and buttons, `8px` for alerts, `12px` for the panel. Pills (`999px`) are reserved for the status badge and the timeline's selection marker. There are no cut corners, folds, or tabs.
 
 ### Named Rules
-**The Square-Or-Tab Rule.** Every control corner is square or a `2px` tab. Pills and rounded buttons do not exist in this world; the only round geometry is a punched hole.
 
-**The Cut-Corner Rule.** Tags and stamps are distinguished by a cut top-right corner with a shaded flap, not by radius or color fill.
+**The Small-Radius Rule.** Fields and buttons are `6px`, panels `12px`. Nothing is square, and nothing is a capsule — pills are for badges and markers only.
+
+**The No-Device Rule.** No clipped corners, folds, perforations, or punched ends. Shape never carries metaphor.
 
 ## Components
 
-Controls are card fields and one punch. Focus is always the global 2px Hi-Vis Deep outline at a 2px offset.
-
 ### Buttons
-- **Shape:** square corners with a `2px` radius (2px).
-- **Primary (punched tab):** ink (`#16222c`) on hi-vis (`#ff5a1f`) at 5.2:1, `0.6rem 1.5rem` padding, `2.75rem` min-height, weight 700. Two sheet-coloured punched end-holes (4×13px) mark it as a tear-off tab.
-- **Primary hover:** deepens to Hi-Vis Deep (`#c63c08`) with white text. Disabled becomes a blank plate (Sheet Rule fill, Ink Faint text) with the punched holes withdrawn.
-- **Secondary (edge tab):** transparent ink outline on the sheet, `0.55rem 1.4rem`, `2.5rem` min-height, weight 600, with small ringed circular ends. Hover inverts to ink fill / sheet text. A `-quiet` modifier drops the rings for repeated row actions so the device does not dilute down a list.
-- **Confirm (two-press):** a destructive action arms on first press (turning Rust) and only fires on a second press within 4 seconds; the label itself changes to state the consequence.
+
+- **Primary** (`.btn-primary`): hi-vis fill, ink text, `2.5rem` tall. One per zone — *Generate plan*, *Approve & schedule*, *Try again*, *Submit answers*. Its focus ring is sheet, not hi-vis, so it stays visible on the orange.
+- **Secondary** (`.btn-secondary`): transparent with a `ground-line` border and sheet text — *New plan*, *Regenerate plan*, *Add*.
+- **Ghost** (`.btn-ghost`): steel-ghost text, no border — *Sign out*, *Remove*.
+- **Danger** (`.btn-danger`): the armed state of the confirm button — danger text on a lighter danger tint.
+- **Small** (`.btn-sm`): `2rem` tall, for row-level and footer-adjacent controls.
 
 ### Inputs / Fields
-- **Style:** a ruled line, never a box — transparent background, no border except a `1px` Sheet Rule underline, square corners, `0.35rem 0 0.45rem` padding, tabular figures. Labels sit above in the printed label voice, with an optional right-aligned hint.
-- **Focus:** the underline and a `1px` doubling shift to Hi-Vis Deep; the global outline is suppressed on the field itself.
-- **Error:** error prose below the field in Rust; a channel/field error arrives as a Notice.
+
+- **Field** (`.field`): an `elevated` fill, `ground-line` border, `6px` radius. On focus, the border turns hi-vis and a soft hi-vis ring appears. Native `color-scheme: dark` dresses the date and time pickers, the select chevron, and the scrollbars.
+- **Inline field** (`.inline-field`): a borderless line inside the day list that reads as text and gains an `elevated` fill on hover and a hi-vis border on focus. Editing and reading are the same object.
+- Labels sit above their field in `Label` type at steel-ghost.
 
 ### Chips (presets)
-- **Style:** bordered rectangles (`1px`) that are Ink fill / Sheet text when active and transparent with a Sheet Rule border when not; `12px` uppercase tracked text. They are printed selectors, not pills.
+
+Duration presets are real `<button>`s in the small button weights: the active preset is `.btn-primary` with `aria-pressed`, the rest `.btn-secondary`. Reminder channels are native radios inside bordered cards; the chosen card takes the hi-vis border.
 
 ### Cards / Containers
-- **Corner Style:** square (0).
-- **Background:** Waxed Sheet, with a full-bleed Steel header band.
-- **Shadow Strategy:** the single Sheet lift shadow (see Elevation & Depth).
-- **Internal Padding:** `16px` → `24px` at ≥640px; band `10px 16px`.
-- **Structure:** band → objective → profile → date strip → panel → rule → footer.
+
+One `.card` per surface: `ground-raised`, `1px` `ground-line`, `12px` radius, padding `20px` (`24px` at ≥640px). Its zones are divided by `Divider` hairlines. Alerts are tinted blocks inside the panel.
 
 ### Signature Components
-- **Elevation Profile:** the card's signature SVG. Every plotted point is a real day; camps are outlined circles from real effort when a plan exists, and a labelled schematic when provisional. A perforated rail (Steel Ghost dashes) runs the axis, a Steel level rule marks the base, and the summit is pinned by a dashed hi-vis `TURNAROUND` rule with the end date. Selected camps get a dashed hi-vis ring. It rotates vertical below 640px.
-- **Date Strip:** the deadline arithmetic stated flatly — `Day 1 — <start> ⋯ Day N — <end>` in tabular figures, bounded by soft rules, with the end date in Hi-Vis Deep and a right-aligned camp count.
-- **Punch:** a `0.6rem` recessed hole; `data-marked="true"` fills it hi-vis. It marks a camp, a selection, and a chosen channel.
-- **Stamp:** a rotated, folded-corner tag (`-2deg`, 2px Ink border, 11px bold tracked caps); the approved stamp is larger (15px, 3px border, `-4deg`, Hi-Vis Deep).
-- **Notice:** a bordered recess block — Steel by default, Rust for a fault, Hi-Vis Deep for a limit — with an uppercase label over `13.5px` Ink Soft prose.
-- **Field Row:** a printed key/value line, uppercase Ink Faint label left, `13.5px` semibold tabular value right, separated by a soft rule.
-- **Camp list:** bordered top rules per row, a Punch + condensed `D<n>` marker in a fixed left gutter, an always-editable ruled title and description, inline to-dos with their own punches, and a quiet two-press "Rewrite this day" at the row's right.
+
+- **Step path + progress bar** (`StepHeader`): labelled steps with numbered chips — hi-vis for the active step, steel for done — a status badge (`Draft`, `Planning`, `Needs answers`, `Ready to review`, `Approved`, `Failed`) on the right, and a `4px` progress track filling in hi-vis.
+- **Timeline** (`Timeline`): the deadline arithmetic, drawn. One `1px` tick per day on a `ground-line` track, the final tick and its label in hi-vis, the count in the middle, the start and end dates in tabular figures. In review it is clickable to select a day and shows a ringed marker on the selection.
+- **Day list** (`DayList`): one row per day — a `Day n` marker, the date, an *Edited* badge, the phase, and the effort in minutes; then the editable title and description, the expected outcome, any validation alerts, the to-dos, an add-to-do row, and an armed *Rewrite this day*. The selected day takes an `elevated/50` fill.
+- **Field row** (`FieldRow`): label left, tabular value right, on a hairline — how the approved panel and the planning panel state facts.
+- **Plan row** (`Plans`): one plan per hairline row — the title and a status badge, the description clamped to two lines, `start → end · N days` in tabular figures, then a thin hi-vis progress bar with `done of total to-dos` and the percentage, plus a danger line when days were missed. A live plan offers *Open*; a draft, *Continue*. The status filter above is a row of small buttons carrying `aria-pressed`, and the chosen filter lives in the URL.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** keep hi-vis orange (`#ff5a1f`) to the turn-around rule and the one primary action, and use Hi-Vis Deep (`#c63c08`) when orange must be type on the sheet.
-- **Do** render every input as a ruled line on the sheet; no boxed fields.
-- **Do** hold the card at `760px` centred, and the sign-in sheet at `440px`.
-- **Do** set labels, stamps, camp markers, and the objective in the condensed cut (`font-stretch: 88%`).
-- **Do** use tabular figures for every date, time, and count.
-- **Do** keep the sheet's single deep shadow, and express everything else through tonal recess and hairline rules.
-- **Do** make destructive actions arm before they fire, with the label stating the consequence.
+
+- **Do** keep hi-vis orange to the primary action, the focus ring, the active step, the deadline, and the progress bar.
+- **Do** render the flow as one panel whose body and footer swap with the phase.
+- **Do** keep the plan index on one panel of hairline rows — status, description, dates, progress, one action — with the status filter in the URL.
+- **Do** set all copy in sentence case, in Archivo at normal width, on one scale.
+- **Do** state the deadline arithmetic plainly — timeline ticks, tabular dates, the count.
+- **Do** use tabular figures for every date, time, count, and duration.
+- **Do** express depth with hairlines and the two tonal steps; add no shadow.
+- **Do** make destructive actions arm before they fire, with the label naming the consequence.
 
 ### Don't:
-- **Don't** introduce pills, switches, or rounded buttons; corners are square or a `2px` tab.
-- **Don't** add a second type family or substitute a system display face for Archivo.
-- **Don't** spend the orange anywhere else — no second accent, no orange chrome or decoration.
-- **Don't** add gradients, glass, confetti, or glow effects; depth is one shadow and flat tonal layering.
-- **Don't** gray secondary text on a colored surface; tint it from the palette (Ink Soft, Steel) instead.
-- **Don't** revive the cream-and-serif calming-coach aesthetic, or draw the flow's commitment as progress dots.
+
+- **Don't** reintroduce the metaphor or its devices — camps, summit, turnaround, route card, elevation profile, stamp, punched tabs.
+- **Don't** use a second accent, orange chrome, gradients, glass, or glow.
+- **Don't** set labels or buttons in uppercase with tracking, or use the condensed cut.
+- **Don't** gray muted text — tint it from the canvas (steel-ghost) instead.
+- **Don't** fabricate progress charts, points, or streaks for effect; the only chart is the real timeline.
+- **Don't** add shadows to more elements; the system has none.

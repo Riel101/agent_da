@@ -42,12 +42,12 @@ export async function run({ browser, api, checks }) {
       // Walk the tab order with the keyboard so :focus-visible actually fires.
       for (let step = 0; step < 40; step += 1) {
         const onPrimary = await page.evaluate(
-          () => document.activeElement?.matches('button.punch-tab') ?? false,
+          () => document.activeElement?.matches('[data-testid="primary-action"]') ?? false,
         )
         if (onPrimary) break
         await page.keyboard.press('Tab')
       }
-      const focused = await page.evaluate(() => document.activeElement?.matches('button.punch-tab') ?? false)
+      const focused = await page.evaluate(() => document.activeElement?.matches('[data-testid="primary-action"]') ?? false)
       checks.ok(focused, 'focus-tab: the primary tab never received keyboard focus')
       await sleep(200)
     },

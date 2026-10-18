@@ -6,16 +6,39 @@ Values are read from the environment (and an optional ``.env`` file).
 
 from __future__ import annotations
 
+import json
 from functools import lru_cache
-from typing import Literal
+from pathlib import Path
+from typing import Annotated, Literal
 
 from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
+
+def _repo_root(start: Path) -> Path:
+    """Walk up until the checkout root is found, so paths do not depend on CWD."""
+    for candidate in (start, *start.parents):
+        if (candidate / "apps" / "api" / "app").is_dir():
+            return candidate
+    return start
+
+
+REPO_ROOT = _repo_root(Path(__file__).resolve())
+
+#: ``.env`` is anchored to the repo root so it is found from any working
+#: directory. ``apps/api`` is the CWD whenever the API is started by
+#: ``npm run dev:all``, and CWD-relative paths silently missed the root file —
+#: which left every SMTP/Twilio setting in it inert.
+ENV_FILES = (
+    REPO_ROOT / ".env",
+    REPO_ROOT / "apps" / "api" / ".env",
+    Path(".env"),
+    Path("apps/api/.env"),
+)
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=(".env", "apps/api/.env"),
+        env_file=ENV_FILES,
         env_file_encoding="utf-8",
         extra="ignore",
         case_sensitive=False,
@@ -27,7 +50,12 @@ class Settings(BaseSettings):
     debug: bool = False
     api_prefix: str = "/api/v1"
     public_base_url: str = "http://localhost:8000"
-    cors_origins: list[str] = Field(default_factory=lambda: ["http://localhost:5173"])
+    # ``NoDecode`` stops pydantic-settings from JSON-decoding this before the
+    # validator below runs, so ``CORS_ORIGINS=a,b`` works as documented. Without
+    # it, simply having the line in .env made the application fail to start.
+    cors_origins: Annotated[list[str], NoDecode] = Field(
+        default_factory=lambda: ["http://localhost:5173"]
+    )
 
     # ------------------------------------------------------------- database
     # Postgres in production (Render), SQLite for local development and tests.
@@ -130,8 +158,17 @@ class Settings(BaseSettings):
     @field_validator("cors_origins", mode="before")
     @classmethod
     def _split_origins(cls, value: object) -> object:
+        """Accept ``a,b`` (what .env documents) or a JSON list."""
         if isinstance(value, str):
-            return [item.strip() for item in value.split(",") if item.strip()]
+            text = value.strip()
+            if text.startswith("["):
+                try:
+                    decoded = json.loads(text)
+                except json.JSONDecodeError:
+                    decoded = None
+                if isinstance(decoded, list):
+                    return decoded
+            return [item.strip() for item in text.split(",") if item.strip()]
         return value
 
     @property

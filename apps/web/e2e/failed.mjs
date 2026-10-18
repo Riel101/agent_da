@@ -7,7 +7,7 @@
  */
 import { execFileSync } from 'node:child_process'
 
-import { cardState, config, profilePointCount, shot } from './harness.mjs'
+import { cardState, config, timelineTickCount, shot } from './harness.mjs'
 
 export const autostart = true
 
@@ -43,11 +43,11 @@ print(cur.rowcount)`,
     height: 1000,
     session: holder.session,
     agendaId: agenda.id,
-    expect: '::-p-text(The route failed)',
+    expect: '::-p-text(Plan failed)',
     settle: 1200,
     probe: async (page) => {
-      checks.ok((await profilePointCount(page)) >= 2, 'failed: the route profile drew fewer than 2 points')
-      checks.contains(await cardState(page), 'FAILED', 'failed: card is not in the FAILED state')
+      checks.ok((await timelineTickCount(page)) >= 2, 'failed: the route profile drew fewer than 2 points')
+      checks.contains(await cardState(page), 'Failed', 'failed: card is not in the FAILED state')
     },
   })
 }

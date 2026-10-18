@@ -4,7 +4,7 @@
  * Writes desktop, review, clarify, mobile, mobile-review, review-top,
  * mobile-review-top and approved. Needs AGENT_AUTOSTART=true.
  */
-import { cardState, profilePointCount, shot } from './harness.mjs'
+import { cardState, timelineTickCount, shot } from './harness.mjs'
 
 export const autostart = true
 
@@ -31,8 +31,8 @@ export async function run({ browser, api, checks }) {
     session: captureSession,
     expect: '[data-testid="objective"]',
     probe: async (page) => {
-      checks.ok((await profilePointCount(page)) >= 2, 'desktop: the route profile drew fewer than 2 points')
-      checks.contains(await cardState(page), 'NEW', 'desktop: card is not in the NEW state')
+      checks.ok((await timelineTickCount(page)) >= 2, 'desktop: the route profile drew fewer than 2 points')
+      checks.contains(await cardState(page), 'Draft', 'desktop: card is not in the NEW state')
     },
   })
 
@@ -47,8 +47,8 @@ export async function run({ browser, api, checks }) {
   })
 
   const reviewProbe = async (page) => {
-    checks.ok((await profilePointCount(page)) >= 2, 'review: the route profile drew fewer than 2 points')
-    checks.contains(await cardState(page), 'IN REVIEW', 'review: card is not in the IN REVIEW state')
+    checks.ok((await timelineTickCount(page)) >= 2, 'review: the route profile drew fewer than 2 points')
+    checks.contains(await cardState(page), 'Ready to review', 'review: card is not in the Ready to review state')
   }
 
   await shot(browser, {
@@ -57,7 +57,7 @@ export async function run({ browser, api, checks }) {
     height: 1000,
     session: planner.session,
     agendaId: agenda.id,
-    expect: '[data-testid="camp-list"]',
+    expect: '[data-testid="day-list"]',
     settle: 1400,
     probe: reviewProbe,
   })
@@ -67,7 +67,7 @@ export async function run({ browser, api, checks }) {
     height: 1000,
     session: planner.session,
     agendaId: agenda.id,
-    expect: '[data-testid="camp-list"]',
+    expect: '[data-testid="day-list"]',
     settle: 1400,
     fullPage: false,
     probe: reviewProbe,
@@ -79,7 +79,7 @@ export async function run({ browser, api, checks }) {
     mobile: true,
     session: planner.session,
     agendaId: agenda.id,
-    expect: '[data-testid="camp-list"]',
+    expect: '[data-testid="day-list"]',
     settle: 1400,
     probe: reviewProbe,
   })
@@ -90,13 +90,13 @@ export async function run({ browser, api, checks }) {
     mobile: true,
     session: planner.session,
     agendaId: agenda.id,
-    expect: '[data-testid="camp-list"]',
+    expect: '[data-testid="day-list"]',
     settle: 1400,
     fullPage: false,
     probe: reviewProbe,
   })
 
-  // ---- approved: the route is stamped and live --------------------------
+  // ---- approved: the plan is approved and live --------------------------
   await api.approve(planner.headers, agenda.id)
   await shot(browser, {
     name: 'approved',
@@ -104,11 +104,11 @@ export async function run({ browser, api, checks }) {
     height: 1000,
     session: planner.session,
     agendaId: agenda.id,
-    expect: '[data-testid="stamped"]',
+    expect: '[data-testid="approved"]',
     settle: 1400,
     probe: async (page) => {
-      checks.ok((await profilePointCount(page)) >= 2, 'approved: the route profile drew fewer than 2 points')
-      checks.contains(await cardState(page), 'APPROVED', 'approved: card is not in the APPROVED state')
+      checks.ok((await timelineTickCount(page)) >= 2, 'approved: the route profile drew fewer than 2 points')
+      checks.contains(await cardState(page), 'Approved', 'approved: card is not in the APPROVED state')
     },
   })
 
@@ -127,10 +127,10 @@ export async function run({ browser, api, checks }) {
     height: 1000,
     session: vague.session,
     agendaId: unclear.id,
-    expect: '::-p-text(Marginalia)',
+    expect: '::-p-text(Questions)',
     settle: 1200,
     probe: async (page) => {
-      checks.contains(await cardState(page), 'NEEDS ANSWERS', 'clarify: card is not in the NEEDS ANSWERS state')
+      checks.contains(await cardState(page), 'Needs answers', 'clarify: card is not in the Needs answers state')
     },
   })
 
@@ -144,7 +144,7 @@ export async function run({ browser, api, checks }) {
     expect: '[data-testid="objective"]',
     settle: 1200,
     probe: async (page) => {
-      checks.ok((await profilePointCount(page)) >= 2, 'mobile: the vertical profile drew fewer than 2 points')
+      checks.ok((await timelineTickCount(page)) >= 2, 'mobile: the vertical profile drew fewer than 2 points')
     },
   })
 }

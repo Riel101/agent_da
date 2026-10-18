@@ -1,164 +1,537 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-30T21:50:00Z",
-  "title": "Design System: AgentDa — The Route Card",
+  "generatedAt": "2026-10-18T00:00:00Z",
+  "title": "Design System: AgentDa — Clean Slate",
   "extensions": {
     "colorMeta": {
-      "hivis": { "role": "primary", "displayName": "Turnaround Hi-Vis", "canonical": "oklch(68.2% 0.211 37.7)", "tonalRamp": ["oklch(15% 0.211 37.7)", "oklch(26% 0.211 37.7)", "oklch(38% 0.211 37.7)", "oklch(49% 0.211 37.7)", "oklch(61% 0.211 37.7)", "oklch(72% 0.211 37.7)", "oklch(84% 0.211 37.7)", "oklch(95% 0.211 37.7)"] },
-      "hivis-deep": { "role": "primary", "displayName": "Hi-Vis Deep", "canonical": "oklch(55.5% 0.182 36.9)", "tonalRamp": ["oklch(15% 0.182 36.9)", "oklch(26% 0.182 36.9)", "oklch(38% 0.182 36.9)", "oklch(49% 0.182 36.9)", "oklch(61% 0.182 36.9)", "oklch(72% 0.182 36.9)", "oklch(84% 0.182 36.9)", "oklch(95% 0.182 36.9)"] },
-      "steel": { "role": "secondary", "displayName": "Route Steel", "canonical": "oklch(39.4% 0.043 235.4)", "tonalRamp": ["oklch(15% 0.043 235.4)", "oklch(26% 0.043 235.4)", "oklch(38% 0.043 235.4)", "oklch(49% 0.043 235.4)", "oklch(61% 0.043 235.4)", "oklch(72% 0.043 235.4)", "oklch(84% 0.043 235.4)", "oklch(95% 0.043 235.4)"] },
-      "steel-ghost": { "role": "secondary", "displayName": "Steel Ghost", "canonical": "oklch(75.2% 0.026 233.1)", "tonalRamp": ["oklch(15% 0.026 233.1)", "oklch(26% 0.026 233.1)", "oklch(38% 0.026 233.1)", "oklch(49% 0.026 233.1)", "oklch(61% 0.026 233.1)", "oklch(72% 0.026 233.1)", "oklch(84% 0.026 233.1)", "oklch(95% 0.026 233.1)"] },
-      "fault": { "role": "tertiary", "displayName": "Flagged Rust", "canonical": "oklch(52.0% 0.159 30.7)", "tonalRamp": ["oklch(15% 0.159 30.7)", "oklch(26% 0.159 30.7)", "oklch(38% 0.159 30.7)", "oklch(49% 0.159 30.7)", "oklch(61% 0.159 30.7)", "oklch(72% 0.159 30.7)", "oklch(84% 0.159 30.7)", "oklch(95% 0.159 30.7)"] },
-      "ground": { "role": "neutral", "displayName": "Deep Slate Ground", "canonical": "oklch(21.2% 0.026 244.6)", "tonalRamp": ["oklch(15% 0.026 244.6)", "oklch(26% 0.026 244.6)", "oklch(38% 0.026 244.6)", "oklch(49% 0.026 244.6)", "oklch(61% 0.026 244.6)", "oklch(72% 0.026 244.6)", "oklch(84% 0.026 244.6)", "oklch(95% 0.026 244.6)"] },
-      "ground-line": { "role": "neutral", "displayName": "Ground Line", "canonical": "oklch(31.6% 0.029 238.9)", "tonalRamp": ["oklch(15% 0.029 238.9)", "oklch(26% 0.029 238.9)", "oklch(38% 0.029 238.9)", "oklch(49% 0.029 238.9)", "oklch(61% 0.029 238.9)", "oklch(72% 0.029 238.9)", "oklch(84% 0.029 238.9)", "oklch(95% 0.029 238.9)"] },
-      "sheet": { "role": "neutral", "displayName": "Waxed Sheet", "canonical": "oklch(96.5% 0.006 128.5)", "tonalRamp": ["oklch(15% 0.006 128.5)", "oklch(26% 0.006 128.5)", "oklch(38% 0.006 128.5)", "oklch(49% 0.006 128.5)", "oklch(61% 0.006 128.5)", "oklch(72% 0.006 128.5)", "oklch(84% 0.006 128.5)", "oklch(95% 0.006 128.5)"] },
-      "sheet-recess": { "role": "neutral", "displayName": "Sheet Recess", "canonical": "oklch(93.2% 0.010 140.5)", "tonalRamp": ["oklch(15% 0.010 140.5)", "oklch(26% 0.010 140.5)", "oklch(38% 0.010 140.5)", "oklch(49% 0.010 140.5)", "oklch(61% 0.010 140.5)", "oklch(72% 0.010 140.5)", "oklch(84% 0.010 140.5)", "oklch(95% 0.010 140.5)"] },
-      "sheet-rule": { "role": "neutral", "displayName": "Sheet Rule", "canonical": "oklch(84.5% 0.016 145.4)", "tonalRamp": ["oklch(15% 0.016 145.4)", "oklch(26% 0.016 145.4)", "oklch(38% 0.016 145.4)", "oklch(49% 0.016 145.4)", "oklch(61% 0.016 145.4)", "oklch(72% 0.016 145.4)", "oklch(84% 0.016 145.4)", "oklch(95% 0.016 145.4)"] },
-      "sheet-rule-soft": { "role": "neutral", "displayName": "Sheet Rule Soft", "canonical": "oklch(89.4% 0.013 137.8)", "tonalRamp": ["oklch(15% 0.013 137.8)", "oklch(26% 0.013 137.8)", "oklch(38% 0.013 137.8)", "oklch(49% 0.013 137.8)", "oklch(61% 0.013 137.8)", "oklch(72% 0.013 137.8)", "oklch(84% 0.013 137.8)", "oklch(95% 0.013 137.8)"] },
-      "ink": { "role": "neutral", "displayName": "Carbon Ink", "canonical": "oklch(24.6% 0.026 244.2)", "tonalRamp": ["oklch(15% 0.026 244.2)", "oklch(26% 0.026 244.2)", "oklch(38% 0.026 244.2)", "oklch(49% 0.026 244.2)", "oklch(61% 0.026 244.2)", "oklch(72% 0.026 244.2)", "oklch(84% 0.026 244.2)", "oklch(95% 0.026 244.2)"] },
-      "ink-soft": { "role": "neutral", "displayName": "Ink Soft", "canonical": "oklch(43.8% 0.024 239.2)", "tonalRamp": ["oklch(15% 0.024 239.2)", "oklch(26% 0.024 239.2)", "oklch(38% 0.024 239.2)", "oklch(49% 0.024 239.2)", "oklch(61% 0.024 239.2)", "oklch(72% 0.024 239.2)", "oklch(84% 0.024 239.2)", "oklch(95% 0.024 239.2)"] },
-      "ink-faint": { "role": "neutral", "displayName": "Ink Faint", "canonical": "oklch(51.6% 0.023 239.0)", "tonalRamp": ["oklch(15% 0.023 239.0)", "oklch(26% 0.023 239.0)", "oklch(38% 0.023 239.0)", "oklch(49% 0.023 239.0)", "oklch(61% 0.023 239.0)", "oklch(72% 0.023 239.0)", "oklch(84% 0.023 239.0)", "oklch(95% 0.023 239.0)"] }
+      "hivis": {
+        "role": "primary",
+        "displayName": "Hi-Vis Orange",
+        "canonical": "oklch(68.2% 0.211 37.7)",
+        "tonalRamp": [
+          "oklch(15% 0.211 37.7)",
+          "oklch(26% 0.211 37.7)",
+          "oklch(38% 0.211 37.7)",
+          "oklch(49% 0.211 37.7)",
+          "oklch(61% 0.211 37.7)",
+          "oklch(72% 0.211 37.7)",
+          "oklch(84% 0.211 37.7)",
+          "oklch(95% 0.211 37.7)"
+        ]
+      },
+      "hivis-deep": {
+        "role": "primary",
+        "displayName": "Hi-Vis Deep",
+        "canonical": "oklch(55.5% 0.182 36.9)",
+        "tonalRamp": [
+          "oklch(15% 0.182 36.9)",
+          "oklch(26% 0.182 36.9)",
+          "oklch(38% 0.182 36.9)",
+          "oklch(49% 0.182 36.9)",
+          "oklch(61% 0.182 36.9)",
+          "oklch(72% 0.182 36.9)",
+          "oklch(84% 0.182 36.9)",
+          "oklch(95% 0.182 36.9)"
+        ]
+      },
+      "steel": {
+        "role": "secondary",
+        "displayName": "Steel",
+        "canonical": "oklch(39.4% 0.043 235.4)",
+        "tonalRamp": [
+          "oklch(15% 0.043 235.4)",
+          "oklch(26% 0.043 235.4)",
+          "oklch(38% 0.043 235.4)",
+          "oklch(49% 0.043 235.4)",
+          "oklch(61% 0.043 235.4)",
+          "oklch(72% 0.043 235.4)",
+          "oklch(84% 0.043 235.4)",
+          "oklch(95% 0.043 235.4)"
+        ]
+      },
+      "steel-soft": {
+        "role": "secondary",
+        "displayName": "Steel Soft",
+        "canonical": "oklch(53.0% 0.039 232.8)",
+        "tonalRamp": [
+          "oklch(15% 0.039 232.8)",
+          "oklch(26% 0.039 232.8)",
+          "oklch(38% 0.039 232.8)",
+          "oklch(49% 0.039 232.8)",
+          "oklch(61% 0.039 232.8)",
+          "oklch(72% 0.039 232.8)",
+          "oklch(84% 0.039 232.8)",
+          "oklch(95% 0.039 232.8)"
+        ]
+      },
+      "steel-ghost": {
+        "role": "secondary",
+        "displayName": "Steel Ghost",
+        "canonical": "oklch(75.2% 0.026 233.1)",
+        "tonalRamp": [
+          "oklch(15% 0.026 233.1)",
+          "oklch(26% 0.026 233.1)",
+          "oklch(38% 0.026 233.1)",
+          "oklch(49% 0.026 233.1)",
+          "oklch(61% 0.026 233.1)",
+          "oklch(72% 0.026 233.1)",
+          "oklch(84% 0.026 233.1)",
+          "oklch(95% 0.026 233.1)"
+        ]
+      },
+      "fault": {
+        "role": "tertiary",
+        "displayName": "Fault",
+        "canonical": "oklch(52.0% 0.159 30.7)",
+        "tonalRamp": [
+          "oklch(15% 0.159 30.7)",
+          "oklch(26% 0.159 30.7)",
+          "oklch(38% 0.159 30.7)",
+          "oklch(49% 0.159 30.7)",
+          "oklch(61% 0.159 30.7)",
+          "oklch(72% 0.159 30.7)",
+          "oklch(84% 0.159 30.7)",
+          "oklch(95% 0.159 30.7)"
+        ]
+      },
+      "danger": {
+        "role": "tertiary",
+        "displayName": "Danger",
+        "canonical": "oklch(70.8% 0.186 31.7)",
+        "tonalRamp": [
+          "oklch(15% 0.186 31.7)",
+          "oklch(26% 0.186 31.7)",
+          "oklch(38% 0.186 31.7)",
+          "oklch(49% 0.186 31.7)",
+          "oklch(61% 0.186 31.7)",
+          "oklch(72% 0.186 31.7)",
+          "oklch(84% 0.186 31.7)",
+          "oklch(95% 0.186 31.7)"
+        ]
+      },
+      "ground": {
+        "role": "neutral",
+        "displayName": "Deep Slate Ground",
+        "canonical": "oklch(21.2% 0.026 244.6)",
+        "tonalRamp": [
+          "oklch(15% 0.026 244.6)",
+          "oklch(26% 0.026 244.6)",
+          "oklch(38% 0.026 244.6)",
+          "oklch(49% 0.026 244.6)",
+          "oklch(61% 0.026 244.6)",
+          "oklch(72% 0.026 244.6)",
+          "oklch(84% 0.026 244.6)",
+          "oklch(95% 0.026 244.6)"
+        ]
+      },
+      "ground-raised": {
+        "role": "neutral",
+        "displayName": "Ground Raised",
+        "canonical": "oklch(25.0% 0.028 244.8)",
+        "tonalRamp": [
+          "oklch(15% 0.028 244.8)",
+          "oklch(26% 0.028 244.8)",
+          "oklch(38% 0.028 244.8)",
+          "oklch(49% 0.028 244.8)",
+          "oklch(61% 0.028 244.8)",
+          "oklch(72% 0.028 244.8)",
+          "oklch(84% 0.028 244.8)",
+          "oklch(95% 0.028 244.8)"
+        ]
+      },
+      "elevated": {
+        "role": "neutral",
+        "displayName": "Elevated",
+        "canonical": "oklch(27.2% 0.032 250.9)",
+        "tonalRamp": [
+          "oklch(15% 0.032 250.9)",
+          "oklch(26% 0.032 250.9)",
+          "oklch(38% 0.032 250.9)",
+          "oklch(49% 0.032 250.9)",
+          "oklch(61% 0.032 250.9)",
+          "oklch(72% 0.032 250.9)",
+          "oklch(84% 0.032 250.9)",
+          "oklch(95% 0.032 250.9)"
+        ]
+      },
+      "ground-line": {
+        "role": "neutral",
+        "displayName": "Ground Line",
+        "canonical": "oklch(31.6% 0.029 238.9)",
+        "tonalRamp": [
+          "oklch(15% 0.029 238.9)",
+          "oklch(26% 0.029 238.9)",
+          "oklch(38% 0.029 238.9)",
+          "oklch(49% 0.029 238.9)",
+          "oklch(61% 0.029 238.9)",
+          "oklch(72% 0.029 238.9)",
+          "oklch(84% 0.029 238.9)",
+          "oklch(95% 0.029 238.9)"
+        ]
+      },
+      "sheet": {
+        "role": "neutral",
+        "displayName": "Waxed Sheet",
+        "canonical": "oklch(96.5% 0.006 128.5)",
+        "tonalRamp": [
+          "oklch(15% 0.006 128.5)",
+          "oklch(26% 0.006 128.5)",
+          "oklch(38% 0.006 128.5)",
+          "oklch(49% 0.006 128.5)",
+          "oklch(61% 0.006 128.5)",
+          "oklch(72% 0.006 128.5)",
+          "oklch(84% 0.006 128.5)",
+          "oklch(95% 0.006 128.5)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Carbon Ink",
+        "canonical": "oklch(24.6% 0.026 244.2)",
+        "tonalRamp": [
+          "oklch(15% 0.026 244.2)",
+          "oklch(26% 0.026 244.2)",
+          "oklch(38% 0.026 244.2)",
+          "oklch(49% 0.026 244.2)",
+          "oklch(61% 0.026 244.2)",
+          "oklch(72% 0.026 244.2)",
+          "oklch(84% 0.026 244.2)",
+          "oklch(95% 0.026 244.2)"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Ink Soft (retained)",
+        "canonical": "oklch(43.8% 0.024 239.2)",
+        "tonalRamp": [
+          "oklch(15% 0.024 239.2)",
+          "oklch(26% 0.024 239.2)",
+          "oklch(38% 0.024 239.2)",
+          "oklch(49% 0.024 239.2)",
+          "oklch(61% 0.024 239.2)",
+          "oklch(72% 0.024 239.2)",
+          "oklch(84% 0.024 239.2)",
+          "oklch(95% 0.024 239.2)"
+        ]
+      },
+      "ink-faint": {
+        "role": "neutral",
+        "displayName": "Ink Faint (retained)",
+        "canonical": "oklch(51.6% 0.023 239.0)",
+        "tonalRamp": [
+          "oklch(15% 0.023 239.0)",
+          "oklch(26% 0.023 239.0)",
+          "oklch(38% 0.023 239.0)",
+          "oklch(49% 0.023 239.0)",
+          "oklch(61% 0.023 239.0)",
+          "oklch(72% 0.023 239.0)",
+          "oklch(84% 0.023 239.0)",
+          "oklch(95% 0.023 239.0)"
+        ]
+      },
+      "sheet-recess": {
+        "role": "neutral",
+        "displayName": "Sheet Recess (retained)",
+        "canonical": "oklch(93.2% 0.010 140.5)",
+        "tonalRamp": [
+          "oklch(15% 0.010 140.5)",
+          "oklch(26% 0.010 140.5)",
+          "oklch(38% 0.010 140.5)",
+          "oklch(49% 0.010 140.5)",
+          "oklch(61% 0.010 140.5)",
+          "oklch(72% 0.010 140.5)",
+          "oklch(84% 0.010 140.5)",
+          "oklch(95% 0.010 140.5)"
+        ]
+      },
+      "sheet-rule": {
+        "role": "neutral",
+        "displayName": "Sheet Rule (retained)",
+        "canonical": "oklch(84.5% 0.016 145.4)",
+        "tonalRamp": [
+          "oklch(15% 0.016 145.4)",
+          "oklch(26% 0.016 145.4)",
+          "oklch(38% 0.016 145.4)",
+          "oklch(49% 0.016 145.4)",
+          "oklch(61% 0.016 145.4)",
+          "oklch(72% 0.016 145.4)",
+          "oklch(84% 0.016 145.4)",
+          "oklch(95% 0.016 145.4)"
+        ]
+      },
+      "sheet-rule-soft": {
+        "role": "neutral",
+        "displayName": "Sheet Rule Soft (retained)",
+        "canonical": "oklch(89.4% 0.013 137.8)",
+        "tonalRamp": [
+          "oklch(15% 0.013 137.8)",
+          "oklch(26% 0.013 137.8)",
+          "oklch(38% 0.013 137.8)",
+          "oklch(49% 0.013 137.8)",
+          "oklch(61% 0.013 137.8)",
+          "oklch(72% 0.013 137.8)",
+          "oklch(84% 0.013 137.8)",
+          "oklch(95% 0.013 137.8)"
+        ]
+      }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "The printed objective headline. Condensed, balanced, 1.5rem to 1.875rem." },
-      "headline": { "displayName": "Headline", "purpose": "The objective while it is being typed, as an auto-growing ruled line." },
-      "title": { "displayName": "Title", "purpose": "A camp's own editable name in the day list." },
-      "body": { "displayName": "Body", "purpose": "Panel prose and the finish line; measure capped at 54-68ch." },
-      "caption": { "displayName": "Caption", "purpose": "Hints, counts and metadata, in tabular figures." },
-      "label": { "displayName": "Label", "purpose": "Printed field and band labels, stamps, and D<n> camp markers. Condensed, uppercase." }
+      "display": {
+        "displayName": "Display",
+        "purpose": "The goal as a heading and the sign-in title. 600, 1.375rem to 1.625rem, balanced."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "The goal while it is being typed, as a bordered auto-growing field."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Section headings, a day's editable name, and question prompts."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Panel prose, measure capped at 62-68ch."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Hints, counts and metadata, in tabular figures."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels and metadata. Normal width, normal tracking, sentence case."
+      }
     },
     "shadows": [
-      { "name": "sheet-lift", "value": "0 28px 70px -28px rgba(0, 0, 0, 0.75)", "purpose": "The route card and the sign-in sheet — the only shadow in the system, so the sheet reads as resting on a table." },
-      { "name": "punch-inset", "value": "inset 0 1px 0 rgb(22 34 44 / 0.18)", "purpose": "A camp's punched hole, so the recess reads as removed material." },
-      { "name": "focus-rule", "value": "0 1px 0 0 #c63c08", "purpose": "A ruled input on focus doubles its underline in Hi-Vis Deep instead of glowing." }
+      {
+        "name": "field-focus-ring",
+        "value": "0 0 0 3px rgb(255 90 31 / 0.16)",
+        "purpose": "A text field on focus: the hi-vis border plus a soft hi-vis ring. The only depth in the system."
+      }
     ],
     "motion": [
-      { "name": "sheet-fill", "value": "card-in 180ms ease-out", "purpose": "The one authored moment: the sheet filling itself in when the phase changes. Opacity only, short and settled well before any capture." },
-      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default transition timing for state changes." },
-      { "name": "duration-quick", "value": "150ms", "purpose": "Default transition duration, e.g. a camp row's selection tint." }
+      {
+        "name": "phase-fill",
+        "value": "fade-in 160ms ease-out",
+        "purpose": "The one authored moment: the phase panel settling in when the plan's state changes. Opacity only, short and settled well before any capture."
+      },
+      {
+        "name": "ease-standard",
+        "value": "ease",
+        "purpose": "Default transition timing for colour and border changes on fields and buttons."
+      },
+      {
+        "name": "duration-quick",
+        "value": "120ms",
+        "purpose": "Default transition duration for hover, focus and selection tints."
+      }
     ],
     "breakpoints": [
-      { "name": "sm", "value": "640px" }
+      {
+        "name": "sm",
+        "value": "640px"
+      }
     ]
   },
   "components": [
     {
-      "name": "Punched Tab (primary action)",
-      "kind": "button",
-      "refersTo": "punch-tab",
-      "description": "The single primary action: ink on hi-vis orange with punched sheet-coloured end-holes. Used once per card ('Draft the route', 'Approve and schedule', 'Open my card').",
-      "html": "<button class=\"ds-punch-tab\">Draft the route</button>",
-      "css": ".ds-punch-tab{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:.6rem;min-height:2.75rem;padding:.6rem 1.5rem;background:var(--color-hivis,#ff5a1f);color:var(--color-ink,#16222c);border:0;border-radius:2px;font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif);font-size:.9375rem;font-weight:700;letter-spacing:.01em;cursor:pointer}.ds-punch-tab::before,.ds-punch-tab::after{content:'';position:absolute;top:50%;width:4px;height:13px;border-radius:2px;background:var(--color-sheet,#f2f4f0);transform:translateY(-50%)}.ds-punch-tab::before{left:6px}.ds-punch-tab::after{right:6px}.ds-punch-tab:hover:not(:disabled){background:var(--color-hivis-deep,#c63c08);color:#fff}.ds-punch-tab:focus-visible{outline:2px solid var(--color-hivis-deep,#c63c08);outline-offset:2px}.ds-punch-tab:disabled{background:var(--color-sheet-rule,#c6cfc6);color:var(--color-ink-faint,#5c6a74);cursor:not-allowed}.ds-punch-tab:disabled::before,.ds-punch-tab:disabled::after{opacity:0}"
-    },
-    {
-      "name": "Edge Tab (secondary action)",
-      "kind": "button",
-      "refersTo": "edge-tab",
-      "description": "A quieter control: ink outline on the sheet with small ringed circular ends. The quiet modifier drops the rings for repeated row actions so the device does not dilute down a list.",
-      "html": "<button class=\"ds-edge-tab\">Draft another route</button>",
-      "css": ".ds-edge-tab{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:2.5rem;padding:.55rem 1.4rem;background:transparent;color:var(--color-ink,#16222c);border:1px solid var(--color-ink,#16222c);border-radius:2px;font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif);font-size:.875rem;font-weight:600;cursor:pointer}.ds-edge-tab::before,.ds-edge-tab::after{content:'';position:absolute;top:50%;width:6px;height:6px;border:1px solid currentColor;border-radius:50%;transform:translateY(-50%)}.ds-edge-tab::before{left:6px}.ds-edge-tab::after{right:6px}.ds-edge-tab:hover:not(:disabled){background:var(--color-ink,#16222c);color:var(--color-sheet,#f2f4f0)}.ds-edge-tab:focus-visible{outline:2px solid var(--color-hivis-deep,#c63c08);outline-offset:2px}.ds-edge-tab:disabled{border-color:var(--color-sheet-rule,#c6cfc6);color:var(--color-ink-faint,#5c6a74);cursor:not-allowed}.ds-edge-tab--quiet::before,.ds-edge-tab--quiet::after{content:none}"
-    },
-    {
-      "name": "Ruled Line Input",
+      "name": "Text Field",
       "kind": "input",
-      "refersTo": "line-input",
-      "description": "A ruled line you type onto: no box, just the print's rule. Focus doubles the underline in hi-vis. This is the only text-field treatment in the system.",
-      "html": "<label style=\"display:block;background:#f2f4f0;padding:16px\"><span class=\"ds-label\">Start</span><input class=\"ds-line-input\" type=\"text\" placeholder=\"1 Oct 2026\"></label>",
-      "css": ".ds-line-input{width:100%;background:transparent;border:0;border-bottom:1px solid var(--color-sheet-rule,#c6cfc6);border-radius:0;padding:.35rem 0 .45rem;color:var(--color-ink,#16222c);font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif);font-size:.9375rem;font-variant-numeric:tabular-nums}.ds-line-input::placeholder{color:var(--color-ink-faint,#5c6a74)}.ds-line-input:focus{outline:none;border-bottom-color:var(--color-hivis-deep,#c63c08);box-shadow:0 1px 0 0 var(--color-hivis-deep,#c63c08)}.ds-line-input:disabled{color:var(--color-ink-soft,#46545e)}"
+      "refersTo": "field",
+      "description": "The standard control on the dark canvas: an Elevated fill, a Ground Line border, 6px radius. Focus turns the border hi-vis and adds a soft hi-vis ring. Native dark color-scheme dresses the pickers and the select chevron.",
+      "html": "<label style=\"display:block;background:#16232e;padding:16px\"><span style=\"display:block;color:#9fb2bd;font-size:13px;font-weight:500;margin-bottom:6px\">Goal</span><input class=\"ds-field\" type=\"text\" value=\"Launch my SaaS to 100 paying users\"></label>",
+      "css": ".ds-field{width:100%;background:var(--color-elevated,#1b2836);border:1px solid var(--color-ground-line,#24343f);border-radius:6px;padding:.5rem .7rem;color:var(--color-sheet,#f2f4f0);font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif);font-size:.9375rem;line-height:1.45;transition:border-color 120ms ease,box-shadow 120ms ease}.ds-field::placeholder{color:var(--color-steel-ghost,#9fb2bd)}.ds-field:hover{border-color:var(--color-steel-soft,#55707f)}.ds-field:focus{outline:none;border-color:var(--color-hivis,#ff5a1f);box-shadow:0 0 0 3px rgb(255 90 31 / .16)}"
     },
     {
-      "name": "Route Card",
+      "name": "Inline Field",
+      "kind": "input",
+      "refersTo": "inline-field",
+      "description": "A line inside the day list that reads as text until it is touched: transparent at rest, an Elevated fill on hover, a hi-vis border on focus. Reading and editing are the same object.",
+      "html": "<label style=\"display:block;background:#16232e;padding:16px\"><input class=\"ds-inline-field\" type=\"text\" value=\"Draft the launch page\"></label>",
+      "css": ".ds-inline-field{width:100%;background:transparent;border:1px solid transparent;border-radius:6px;padding:.25rem .5rem;color:var(--color-sheet,#f2f4f0);font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif);font-size:.9375rem;font-weight:500;line-height:1.45;transition:background-color 120ms ease,border-color 120ms ease}.ds-inline-field::placeholder{color:var(--color-steel-ghost,#9fb2bd)}.ds-inline-field:hover{background:var(--color-elevated,#1b2836)}.ds-inline-field:focus{outline:none;background:var(--color-elevated,#1b2836);border-color:var(--color-hivis,#ff5a1f)}"
+    },
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "btn-primary",
+      "description": "The one hi-vis action per zone: ink on orange, 2.5rem tall, 6px radius. Its focus ring is sheet so it stays visible on the orange; its hover fill is Hi-Vis Deep.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Generate plan</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:2.5rem;padding:.5rem 1rem;border:1px solid transparent;border-radius:6px;font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif);font-size:.875rem;font-weight:600;line-height:1;white-space:nowrap;cursor:pointer;transition:background-color 120ms ease,border-color 120ms ease,color 120ms ease}.ds-btn:disabled{cursor:not-allowed;opacity:.5}.ds-btn-primary{background:var(--color-hivis,#ff5a1f);color:var(--color-ink,#16222c)}.ds-btn-primary:hover:not(:disabled){background:var(--color-hivis-deep,#c63c08);color:#fff}.ds-btn-primary:focus-visible{outline:2px solid var(--color-sheet,#f2f4f0);outline-offset:2px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "btn-secondary",
+      "description": "A quieter control: transparent with a Ground Line border and sheet text, lifted to an Elevated fill on hover. Used for New plan, Regenerate plan and Add.",
+      "html": "<button class=\"ds-btn ds-btn-secondary\">New plan</button>",
+      "css": ".ds-btn-secondary{background:transparent;border-color:var(--color-ground-line,#24343f);color:var(--color-sheet,#f2f4f0)}.ds-btn-secondary:hover:not(:disabled){background:var(--color-elevated,#1b2836);border-color:var(--color-steel-soft,#55707f)}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "btn-ghost",
+      "description": "Steel-ghost text and no border, for Sign out and row-level Remove. It never competes with the primary action.",
+      "html": "<button class=\"ds-btn ds-btn-ghost\">Sign out</button>",
+      "css": ".ds-btn-ghost{background:transparent;color:var(--color-steel-ghost,#9fb2bd)}.ds-btn-ghost:hover:not(:disabled){background:var(--color-elevated,#1b2836);color:var(--color-sheet,#f2f4f0)}"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "btn-danger",
+      "description": "The armed state of the two-press confirm: Danger text on a lighter danger tint. The label names the consequence before it fires.",
+      "html": "<button class=\"ds-btn ds-btn-danger\">Yes, discard every day</button>",
+      "css": ".ds-btn-danger{background:transparent;border-color:rgb(255 107 82 / .45);color:var(--color-danger,#ff6b52)}.ds-btn-danger:hover:not(:disabled){background:rgb(255 107 82 / .12)}"
+    },
+    {
+      "name": "Panel",
       "kind": "card",
-      "refersTo": "route-card",
-      "description": "The one sheet: waxed stock capped at 760px with a full-bleed steel header band, the objective, and a ruled footer. The only lifted object on the slate ground.",
-      "html": "<article class=\"ds-route-card\"><header class=\"ds-route-card__band\"><span>Route card</span><span>New</span><span>№ DRAFT</span></header><div class=\"ds-route-card__body\"><span class=\"ds-route-card__label\">Objective</span><h1 class=\"ds-route-card__title\">Launch my SaaS to 100 paying users</h1></div><footer class=\"ds-route-card__foot\">Summit 29 Oct 2026 — 30 camps.</footer></article>",
-      "css": ".ds-route-card{width:100%;max-width:760px;background:var(--color-sheet,#f2f4f0);color:var(--color-ink,#16222c);box-shadow:0 28px 70px -28px rgba(0,0,0,.75);font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif)}.ds-route-card__band{display:flex;align-items:center;justify-content:space-between;gap:.75rem;background:var(--color-steel,#2f4a5a);padding:10px 16px;color:var(--color-sheet,#f2f4f0);font-size:.6875rem;line-height:1;font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-stretch:88%}.ds-route-card__body{padding:20px 16px 4px}.ds-route-card__label{font-size:.6875rem;line-height:1;font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-stretch:88%;color:var(--color-ink-faint,#5c6a74)}.ds-route-card__title{margin:.375rem 0 0;font-size:1.5rem;line-height:1.15;font-weight:600;font-stretch:88%;text-wrap:balance}.ds-route-card__foot{border-top:1px solid var(--color-sheet-rule,#c6cfc6);padding:16px;font-size:.78125rem;color:var(--color-ink-soft,#46545e)}"
+      "refersTo": "card",
+      "description": "The one panel per surface: Ground Raised behind a Ground Line hairline with a 12px radius and 20-24px padding. Its zones are divided by 1px Divider lines. No shadow.",
+      "html": "<section class=\"ds-card\"><div style=\"padding:20px\"><h1 style=\"margin:0;font-size:26px;color:#f2f4f0\">Launch my SaaS to 100 paying users</h1></div></section>",
+      "css": ".ds-card{width:100%;max-width:720px;background:var(--color-ground-raised,#16232e);border:1px solid var(--color-ground-line,#24343f);border-radius:12px;font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif)}"
     },
     {
-      "name": "Printed Label",
-      "kind": "custom",
-      "refersTo": "label",
-      "description": "The system's labeling voice: condensed, uppercase, 11px with wide tracking. Used for band labels, field labels, camp markers, and stamps.",
-      "html": "<span class=\"ds-label\">Camps</span>",
-      "css": ".ds-label{font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif);font-size:.6875rem;line-height:1;font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-stretch:88%}"
-    },
-    {
-      "name": "Folded Tag Stamp",
+      "name": "Badge",
       "kind": "chip",
-      "refersTo": "stamp",
-      "description": "A printed tag whose top-right corner is cut back like a card in a file, with a shaded fold flap. Rotated slightly and tinted by the ink / hivis / fault tones.",
-      "html": "<span class=\"ds-stamp\">Route complete</span>",
-      "css": ".ds-stamp{position:relative;display:inline-block;padding:4px 8px;padding-right:1.1rem;border:2px solid var(--color-ink,#16222c);color:var(--color-ink,#16222c);font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif);font-size:.6875rem;line-height:1;font-weight:700;letter-spacing:.18em;text-transform:uppercase;font-stretch:88%;transform:rotate(-2deg);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%)}.ds-stamp::after{content:'';position:absolute;top:0;right:0;width:9px;height:9px;background:linear-gradient(45deg,currentColor 50%,transparent 50%);opacity:.5;pointer-events:none}.ds-stamp--hivis{border-color:var(--color-hivis-deep,#c63c08);color:var(--color-hivis-deep,#c63c08)}.ds-stamp--fault{border-color:var(--color-fault,#b23a2a);color:var(--color-fault,#b23a2a)}"
+      "refersTo": "badge",
+      "description": "A compact status pill: neutral for Draft/Edited/phase, accent for the active plan states, danger for Failed. Rounded 999px.",
+      "html": "<span class=\"ds-badge\">Ready to review</span>",
+      "css": ".ds-badge{display:inline-flex;align-items:center;gap:.375rem;border-radius:999px;border:1px solid rgba(255,90,31,.4);background:rgba(255,90,31,.1);color:var(--color-hivis,#ff5a1f);padding:.125rem .625rem;font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif);font-size:11.5px;line-height:20px;font-weight:600}"
     },
     {
-      "name": "Punch",
+      "name": "Alert",
       "kind": "custom",
-      "refersTo": "punch",
-      "description": "The hole a camp is marked through, with a shallow inset so it reads as removed material. Marked punches fill hi-vis for a selection or a chosen channel.",
-      "html": "<span class=\"ds-punch\"></span>&nbsp;&nbsp;<span class=\"ds-punch\" data-marked=\"true\"></span>",
-      "css": ".ds-punch{display:inline-block;width:.6rem;height:.6rem;border:1px solid var(--color-sheet-rule,#c6cfc6);border-radius:999px;background:var(--color-sheet-recess,#e5eae4);box-shadow:inset 0 1px 0 rgba(22,34,44,.18)}.ds-punch[data-marked=\"true\"]{border-color:var(--color-hivis,#ff5a1f);background:var(--color-hivis,#ff5a1f)}"
-    },
-    {
-      "name": "Date Strip",
-      "kind": "custom",
-      "refersTo": "date-strip",
-      "description": "The deadline arithmetic stated flatly: Day 1 to Day N in tabular figures, bounded by soft rules, with the end date in Hi-Vis Deep and a camp count at the right.",
-      "html": "<div class=\"ds-date-strip\"><span>Day 1 — <span class=\"ds-date-strip__strong\">1 Oct 2026</span></span><span class=\"ds-date-strip__elision\" aria-hidden=\"true\">⋯</span><span>Day 30 — <span class=\"ds-date-strip__end\">30 Oct 2026</span></span><span class=\"ds-date-strip__count\">30 camps</span></div>",
-      "css": ".ds-date-strip{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;border-top:1px solid var(--color-sheet-rule-soft,#d8ded6);border-bottom:1px solid var(--color-sheet-rule-soft,#d8ded6);padding:10px 0;font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif);font-size:12.5px;color:var(--color-ink-soft,#46545e);font-variant-numeric:tabular-nums;background:var(--color-sheet,#f2f4f0)}.ds-date-strip__strong{font-weight:600;color:var(--color-ink,#16222c)}.ds-date-strip__end{font-weight:600;color:var(--color-hivis-deep,#c63c08)}.ds-date-strip__elision{color:var(--color-steel-ghost,#9fb2bd)}.ds-date-strip__count{margin-left:auto;color:var(--color-ink-faint,#5c6a74)}"
-    },
-    {
-      "name": "Notice",
-      "kind": "custom",
-      "refersTo": "notice",
-      "description": "A bordered recess block for warnings and flags: Steel by default, Rust for a fault, Hi-Vis Deep for a limit. Carries an uppercase label over soft prose.",
-      "html": "<div class=\"ds-notice\"><span class=\"ds-notice__label\">Warning</span><div class=\"ds-notice__body\">Day 9 has less written than the route expects.</div></div>",
-      "css": ".ds-notice{border:1px solid var(--color-steel,#2f4a5a);background:rgba(229,234,228,.7);padding:10px 12px;font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif)}.ds-notice__label{font-size:.6875rem;line-height:1;font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-stretch:88%;color:var(--color-steel,#2f4a5a)}.ds-notice__body{margin-top:6px;font-size:13.5px;line-height:1.625;color:var(--color-ink-soft,#46545e)}.ds-notice--fault{border-color:var(--color-fault,#b23a2a)}.ds-notice--fault .ds-notice__label{color:var(--color-fault,#b23a2a)}.ds-notice--hivis{border-color:var(--color-hivis,#ff5a1f)}.ds-notice--hivis .ds-notice__label{color:var(--color-hivis-deep,#c63c08)}"
+      "refersTo": "alert",
+      "description": "A tinted block inside the panel for a validation issue or a failure: a 1px border, an 8px radius, a semibold title and prose tinted from the same hue. Info is Elevated/Ground Line, danger is the Danger tint.",
+      "html": "<div class=\"ds-alert\"><p class=\"ds-alert__title\">Flagged</p><div class=\"ds-alert__body\">Day 9 has less written than the plan expects.</div></div>",
+      "css": ".ds-alert{border:1px solid rgb(255 107 82 / .4);background:rgb(255 107 82 / .1);border-radius:8px;padding:.75rem .875rem;font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif)}.ds-alert__title{margin:0;font-size:13px;font-weight:600;color:var(--color-danger,#ff6b52)}.ds-alert__body{margin-top:4px;font-size:13px;line-height:1.625;color:var(--color-danger,#ff6b52)}"
     },
     {
       "name": "Field Row",
       "kind": "custom",
       "refersTo": "field-row",
-      "description": "A printed key/value line, the way a form states a fact: uppercase Ink Faint label left, semibold tabular value right, separated by a soft rule.",
-      "html": "<div class=\"ds-field-row\"><span class=\"ds-field-row__label\">Summit</span><span class=\"ds-field-row__value ds-field-row__value--hivis\">30 Oct 2026 · day 30</span></div>",
-      "css": ".ds-field-row{display:flex;align-items:baseline;justify-content:space-between;gap:16px;border-bottom:1px solid var(--color-sheet-rule-soft,#d8ded6);padding:8px 0;background:var(--color-sheet,#f2f4f0);font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif)}.ds-field-row:last-child{border-bottom:0}.ds-field-row__label{font-size:.6875rem;line-height:1;font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-stretch:88%;color:var(--color-ink-faint,#5c6a74)}.ds-field-row__value{font-size:13.5px;font-weight:600;color:var(--color-ink,#16222c);font-variant-numeric:tabular-nums}.ds-field-row__value--hivis{color:var(--color-hivis-deep,#c63c08)}"
+      "description": "A key/value line the way a form states a fact: steel-ghost label left, semibold tabular value right, on a Ground Line hairline. The accent value is hi-vis for a true deadline.",
+      "html": "<div class=\"ds-field-row\"><span class=\"ds-field-row__label\">Deadline</span><span class=\"ds-field-row__value ds-field-row__value--accent\">21 Nov 2026 · day 30</span></div>",
+      "css": ".ds-field-row{display:flex;align-items:baseline;justify-content:space-between;gap:16px;border-bottom:1px solid var(--color-ground-line,#24343f);padding:.625rem 0;font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif)}.ds-field-row:last-child{border-bottom:0}.ds-field-row__label{font-size:13px;color:var(--color-steel-ghost,#9fb2bd)}.ds-field-row__value{font-size:14px;font-weight:500;color:var(--color-sheet,#f2f4f0);font-variant-numeric:tabular-nums}.ds-field-row__value--accent{color:var(--color-hivis,#ff5a1f)}"
+    },
+    {
+      "name": "Step Path",
+      "kind": "custom",
+      "refersTo": "step-header",
+      "description": "Where the visitor is, stated plainly: labelled steps with numbered chips (hi-vis active, Steel done), a status badge on the right, and a 4px Ground Line progress track filling in hi-vis.",
+      "html": "<div class=\"ds-steps\"><span class=\"ds-steps__item\"><span class=\"ds-steps__num\">1</span>Details</span><span class=\"ds-steps__item\"><span class=\"ds-steps__num ds-steps__num--active\">2</span>Plan</span></div><div class=\"ds-steps__track\"><div class=\"ds-steps__fill\" style=\"width:50%\"></div></div>",
+      "css": ".ds-steps{display:flex;align-items:center;gap:8px;font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif);font-size:12.5px;color:var(--color-steel-ghost,#9fb2bd)}.ds-steps__item{display:flex;align-items:center;gap:6px}.ds-steps__num{display:flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:999px;border:1px solid var(--color-ground-line,#24343f);font-size:10px;font-weight:600}.ds-steps__num--active{background:var(--color-hivis,#ff5a1f);border-color:var(--color-hivis,#ff5a1f);color:var(--color-ink,#16222c)}.ds-steps__track{margin-top:12px;height:4px;border-radius:999px;background:var(--color-ground-line,#24343f);overflow:hidden}.ds-steps__fill{height:100%;border-radius:999px;background:var(--color-hivis,#ff5a1f)}"
+    },
+    {
+      "name": "Timeline",
+      "kind": "custom",
+      "refersTo": "timeline",
+      "description": "The deadline arithmetic, drawn: one 1px tick per day on a Ground Line track, the final tick and its label in hi-vis, the count in the middle, the start and end dates in tabular figures. Clickable in review to select a day.",
+      "html": "<div class=\"ds-timeline\"><div class=\"ds-timeline__track\"></div><div class=\"ds-timeline__ticks\"><span></span><span></span><span></span><span class=\"ds-timeline__tick--end\"></span></div><div class=\"ds-timeline__legend\"><span>Day 1 · 1 Oct</span><span>30 days</span><span>Day 30 · <b>30 Oct</b></span></div></div>",
+      "css": ".ds-timeline{font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif)}.ds-timeline__track{position:absolute;left:0;right:0;top:50%;height:1px;background:var(--color-ground-line,#24343f)}.ds-timeline__ticks{position:relative;display:flex;align-items:center;height:40px}.ds-timeline__ticks span{flex:1;height:10px;border-left:1px solid rgba(85,112,127,.7);margin:0 auto}.ds-timeline__tick--end{border-color:var(--color-hivis,#ff5a1f)!important;height:14px!important}.ds-timeline__legend{display:flex;justify-content:space-between;gap:12px;margin-top:6px;font-size:12.5px;color:var(--color-steel-ghost,#9fb2bd);font-variant-numeric:tabular-nums}.ds-timeline__legend b{font-weight:600;color:var(--color-hivis,#ff5a1f)}"
+    },
+    {
+      "name": "Day Row",
+      "kind": "custom",
+      "refersTo": "day-row",
+      "description": "One day of the plan: a Day n marker, the date, an Edited badge, the phase and the effort in minutes, then the editable title and description, the expected outcome, any validation alerts, the to-dos, an add-to-do row, and an armed Rewrite this day. The selected day takes an Elevated/50 fill.",
+      "html": "<section class=\"ds-day\"><div class=\"ds-day__head\"><b>Day 1</b><span>18 Oct</span><span class=\"ds-badge\">Edited</span></div><div class=\"ds-day__title\">Set up the landing page</div><div class=\"ds-day__meta\">Outcome — a live page with a sign-up form.</div></section>",
+      "css": ".ds-day{border-top:1px solid var(--color-ground-line,#24343f);padding:16px 0;font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif)}.ds-day__head{display:flex;flex-wrap:wrap;align-items:center;gap:12px;font-size:13px;color:var(--color-steel-ghost,#9fb2bd)}.ds-day__head b{color:var(--color-sheet,#f2f4f0);font-weight:600}.ds-day__title{margin-top:8px;font-size:15px;font-weight:500;color:var(--color-sheet,#f2f4f0)}.ds-day__meta{margin-top:8px;font-size:12.5px;color:var(--color-steel-ghost,#9fb2bd)}"
+    },
+    {
+      "name": "Plan Row",
+      "kind": "custom",
+      "refersTo": "plan-row",
+      "description": "One plan on the index panel: the title and a status badge, the description clamped to two lines, the dates and duration in tabular figures, a thin hi-vis progress bar with the to-do count and the percentage, and a danger line when days were missed. A live plan offers Open, a draft Continue. Rows are divided by Ground Line hairlines.",
+      "html": "<article class=\"ds-plan\"><div class=\"ds-plan__head\"><b>Launch my SaaS to 100 paying users</b><span class=\"ds-badge\">Active</span></div><p class=\"ds-plan__desc\">Ship the product and get the first 100 customers onto the Pro plan.</p><p class=\"ds-plan__dates\">1 Oct 2026 &rarr; 30 Oct 2026 &middot; 30 days</p><div class=\"ds-plan__progress\"><span>6 of 30 to-dos done</span><span>20%</span></div><div class=\"ds-plan__track\"><div class=\"ds-plan__fill\" style=\"width:20%\"></div></div></article>",
+      "css": ".ds-plan{border-top:1px solid var(--color-ground-line,#24343f);padding:16px 0;font-family:var(--font-sans,\"Archivo Variable\",Archivo,sans-serif)}.ds-plan:first-child{border-top:0}.ds-plan__head{display:flex;flex-wrap:wrap;align-items:center;gap:10px}.ds-plan__head b{font-size:15px;font-weight:600;color:var(--color-sheet,#f2f4f0)}.ds-plan__desc{margin:4px 0 0;font-size:13px;line-height:1.6;color:var(--color-steel-ghost,#9fb2bd)}.ds-plan__dates{margin:6px 0 0;font-size:12.5px;color:var(--color-steel-ghost,#9fb2bd);font-variant-numeric:tabular-nums}.ds-plan__dates b{font-weight:600;color:var(--color-sheet,#f2f4f0)}.ds-plan__progress{display:flex;justify-content:space-between;gap:12px;margin-top:10px;font-size:12px;color:var(--color-steel-ghost,#9fb2bd);font-variant-numeric:tabular-nums}.ds-plan__track{margin-top:6px;height:6px;border-radius:999px;background:var(--color-ground-line,#24343f);overflow:hidden}.ds-plan__fill{height:100%;border-radius:999px;background:var(--color-hivis,#ff5a1f)}"
     }
   ],
   "narrative": {
-    "northStar": "The Route Card",
-    "overview": "A lit waxed route card lying on a deep slate table. The whole surface is one printed sheet that grows through five states — capture, planning, clarify, review, approved — rather than five screens or a progress-dot stepper. The card is the interface: its steel header band states what the sheet is and where it stands, its objective is a large inked line, its deadline is a dashed hi-vis turn-around rule at the profile's summit, and its single primary action is a punched tab at the foot.\n\nThe character is industrial signage and outfitter's paperwork: printed rules, punched camps, folded tags, tabular figures. Color is two materials and one signal — a dark slate ground, a waxed sheet, and a rationed hi-vis orange that belongs only to the turn-around rule and the one action, because its rarity is what carries the deadline. Type is a single grotesque on a width axis; the condensed cut reads as stencilled camp markers and printed labels, never as a second voice.\n\nDepth is material, not decorative. The sheet is the only lifted object; the ground is flat. Confirmed visual rejections: no points or streaks drawn as ornaments, no progress dots, no confetti, no \"you've got this\" gradients or glass, and nothing of the cream-and-serif calming-coach aesthetic.",
+    "northStar": "Clean Slate",
+    "overview": "A conventional dark application. Both surfaces are one centred panel on a slate canvas. The wizard swaps its body and footer with the plan's state — capture, planning, clarify, review, approved, and a failure case — while the frame around it stays put: a slim top bar, a labelled step path, a thin progress bar, the goal, and a plain timeline of days. The plan index is one row per plan on the same kind of panel, divided by hairlines, each row carrying the plan's status, its dates, and how far along it is. There is no card deck, no metaphor, and nothing that needs a diagram to explain.\n\nThe first surface's palette is kept and re-cast. The slate ground #0e1a24 stops being a tabletop and becomes the canvas itself; panels rest on it as #16232e surfaces with #24343f hairlines; sheet #f2f4f0 becomes the primary text and steel-ghost #9fb2bd the muted tier. Hi-vis orange #ff5a1f survives as the single rationed accent — the one primary action, the focus ring, the active step, and the deadline — and ink #16222c is the text that sits on it. Archivo is kept at its normal width on one scale, in sentence case; the condensed cut is gone.\n\nDepth is hairlines and tonal surfaces. There is no sheet shadow and no ornament: panels are separated from the canvas by a 1px line and a slightly lighter fill. Every rejection from the first world is honoured — no camps, no summit or turnaround, no route card, no elevation chart, no stamp, no punched tabs, no tracked uppercase labels — and the progress-dot stepper ban is deliberately lifted: this build states where the visitor is with a labelled step path and a progress bar, the ordinary way.",
     "keyCharacteristics": [
-      "One printed sheet, ~760px, centred on a deep slate ground.",
-      "Two materials (slate ground / waxed sheet) plus one rationed hi-vis signal.",
-      "A single family, Archivo, used on a `wdth` axis; condensed for labels and camp markers.",
-      "Depth from one deep sheet shadow and tonal layering, plus a punched-hole inset.",
-      "Controls are ruled card fields and punched tabs; never pills, boxes, or switches.",
+      "One panel per surface, at most ~720px, centred on a slate canvas.",
+      "Three slate surface values (canvas / panel / elevated) plus one rationed hi-vis accent.",
+      "A single family, Archivo, at its normal width, on one scale, in sentence case.",
+      "Depth from a single hairline and a tonal step; no shadow anywhere.",
+      "Standard fields, three button weights, and pills only for badges and markers.",
+      "The plan index is hairline rows, not cards: status, dates, progress, one action.",
       "Tabular figures everywhere a date, time, or count appears."
     ],
     "rules": [
-      { "name": "The Rationed Hi-Vis Rule", "body": "Hi-vis orange (#ff5a1f) appears only on the turn-around rule and the single primary action. When orange must be read as type on the sheet, use Hi-Vis Deep (#c63c08). The orange is never a second accent, chrome, or decoration.", "section": "colors" },
-      { "name": "The Two-Material Rule", "body": "Every surface is either the slate ground or the waxed sheet. There is no third surface tone; recess and rule tints of the sheet carry every subordinate zone.", "section": "colors" },
-      { "name": "The One Family Rule", "body": "Archivo is the only family. Emphasis comes from weight and the width axis, never from a second face or a display replacement.", "section": "typography" },
-      { "name": "The Condensed Print Rule", "body": "Anything printed as a label, stamp, or camp marker is set in the condensed cut (font-stretch: 88%) at 11px with wide tracking. The label voice is never rendered in the normal width.", "section": "typography" },
-      { "name": "The One Shadow Rule", "body": "The sheet casts one deep shadow; nothing else in the flow casts one. Depth on the ground is achieved by tonal separation, not by adding shadows to more elements.", "section": "elevation" },
-      { "name": "The Square-Or-Tab Rule", "body": "Every control corner is square or a 2px tab. Pills and rounded buttons do not exist in this world; the only round geometry is a punched hole.", "section": "shapes" },
-      { "name": "The Cut-Corner Rule", "body": "Tags and stamps are distinguished by a cut top-right corner with a shaded flap, not by radius or color fill.", "section": "shapes" }
+      {
+        "name": "The One Accent Rule",
+        "body": "Hi-vis orange (#ff5a1f) is the only accent and it is rationed: the primary action, the focus ring, the active step, the deadline, and the progress bar. Nothing else may be orange. Its scarcity is what makes it read as signal.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tinted-Muted Rule",
+        "body": "Muted text on the canvas is always steel-ghost (#9fb2bd), a light tint of the canvas's own hue. Neutral gray is never introduced, and steel-soft (#55707f) never carries body text.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tonal-Surface Rule",
+        "body": "Surfaces are three values of one slate: canvas, panel, elevated. There is no fourth, and no surface is coloured except a hi-vis or danger tint at 10% or less.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Family Rule",
+        "body": "Archivo is the only family, at its normal width. Emphasis comes from size and weight, never from a second face or the condensed cut.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sentence-Case Rule",
+        "body": "Nothing is set in uppercase with tracking — not labels, not buttons, not badges. The stencilled voice of the first world is retired.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Every date, time, count, and duration uses tabular figures, so the deadline arithmetic reads cleanly down a column.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Panel Rule",
+        "body": "Each surface is one panel. The flow's panel changes its body and footer; the index's panel is a list of hairline rows. Neither becomes multiple cards, a deck, or a wizard of separate pages.",
+        "section": "elevation"
+      },
+      {
+        "name": "The No-Shadow Rule",
+        "body": "Nothing in the flow casts a shadow. Separation is a hairline and a tonal step. The only depth in the system is the field's focus ring.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Hairline Rule",
+        "body": "Every separator is exactly 1px of ground-line (#24343f). A heavier emphasis is a fill, not a thicker border.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Small-Radius Rule",
+        "body": "Fields and buttons are 6px, alerts 8px, the panel 12px. Nothing is square, and nothing is a capsule — pills are for badges and markers only.",
+        "section": "shapes"
+      },
+      {
+        "name": "The No-Device Rule",
+        "body": "No clipped corners, folds, perforations, or punched ends. Shape never carries metaphor.",
+        "section": "shapes"
+      }
     ],
     "dos": [
-      "Do keep hi-vis orange (#ff5a1f) to the turn-around rule and the one primary action, and use Hi-Vis Deep (#c63c08) when orange must be type on the sheet.",
-      "Do render every input as a ruled line on the sheet; no boxed fields.",
-      "Do hold the card at 760px centred, and the sign-in sheet at 440px.",
-      "Do set labels, stamps, camp markers, and the objective in the condensed cut (font-stretch: 88%).",
-      "Do use tabular figures for every date, time, and count.",
-      "Do keep the sheet's single deep shadow, and express everything else through tonal recess and hairline rules.",
-      "Do make destructive actions arm before they fire, with the label stating the consequence."
+      "Do keep hi-vis orange (#ff5a1f) to the primary action, the focus ring, the active step, the deadline, and the progress bar.",
+      "Do render the flow as one panel whose body and footer swap with the phase.",
+      "Do keep the plan index on one panel of hairline rows — status, description, dates, progress, one action — with the status filter in the URL.",
+      "Do set all copy in sentence case, in Archivo at normal width, on one scale.",
+      "Do state the deadline arithmetic plainly — timeline ticks, tabular dates, the count.",
+      "Do use tabular figures for every date, time, count, and duration.",
+      "Do express depth with hairlines and the two tonal steps; add no shadow.",
+      "Do make destructive actions arm before they fire, with the label naming the consequence."
     ],
     "donts": [
-      "Don't introduce pills, switches, or rounded buttons; corners are square or a 2px tab.",
-      "Don't add a second type family or substitute a system display face for Archivo.",
-      "Don't spend the orange anywhere else — no second accent, no orange chrome or decoration.",
-      "Don't add gradients, glass, confetti, or glow effects; depth is one shadow and flat tonal layering.",
-      "Don't gray secondary text on a colored surface; tint it from the palette (Ink Soft, Steel) instead.",
-      "Don't revive the cream-and-serif calming-coach aesthetic, or draw the flow's commitment as progress dots."
+      "Don't reintroduce the metaphor or its devices — camps, summit, turnaround, route card, elevation profile, stamp, punched tabs.",
+      "Don't use a second accent, orange chrome, gradients, glass, or glow.",
+      "Don't set labels or buttons in uppercase with tracking, or use the condensed cut.",
+      "Don't gray muted text — tint it from the canvas (steel-ghost) instead.",
+      "Don't fabricate progress charts, points, or streaks for effect; the only chart is the real timeline.",
+      "Don't add shadows to more elements; the system has none."
     ]
   }
 }

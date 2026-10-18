@@ -38,7 +38,7 @@ export async function run({ browser, api }) {
     name: 'review',
     session: holder.session,
     agendaId: agenda.id,
-    expect: '[data-testid="camp-list"]',
+    expect: '[data-testid="day-list"]',
   })
   await dumpHtml(browser, {
     name: 'review-mobile',
@@ -47,6 +47,6 @@ export async function run({ browser, api }) {
     mobile: true,
     session: holder.session,
     agendaId: agenda.id,
-    expect: '[data-testid="camp-list"]',
+    expect: '[data-testid="day-list"]',
   })
 }

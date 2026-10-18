@@ -55,7 +55,7 @@ export function addDays(iso: ISODate, days: number): ISODate {
 }
 
 /** The final day of a plan that starts on `start` and runs `days` days. */
-export function summitDate(start: ISODate, days: number): ISODate {
+export function endDateFor(start: ISODate, days: number): ISODate {
   return addDays(start, Math.max(1, days) - 1)
 }
 
@@ -78,6 +78,11 @@ export function formatDayMonth(iso: ISODate): string {
 /** `Sun 12 Oct 2026` */
 export function formatFull(iso: ISODate): string {
   return utcFormat({ weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }).format(asUTC(iso))
+}
+
+/** `12 Oct 2026` */
+export function formatDayMonthYear(iso: ISODate): string {
+  return utcFormat({ day: 'numeric', month: 'short', year: 'numeric' }).format(asUTC(iso))
 }
 
 /** `October 2026` */

@@ -49,6 +49,15 @@ export interface AuthResponse {
   expires_in: number
 }
 
+export type AgendaStatus =
+  | 'draft'
+  | 'generating'
+  | 'ready'
+  | 'active'
+  | 'completed'
+  | 'archived'
+  | 'cancelled'
+
 export interface Agenda {
   id: string
   user_id: string
@@ -60,11 +69,28 @@ export interface Agenda {
   reminder_channel: ReminderChannel
   reminder_time: string
   timezone: string
-  status: string
+  status: AgendaStatus
   approved_at: string | null
+  completed_at: string | null
   total_points: number
   perfect_run: boolean
   created_at: string
+}
+
+/** `GET /agendas` items add the per-plan counts the index needs. */
+export interface AgendaSummary extends Agenda {
+  total_todos: number
+  done_todos: number
+  progress_pct: number
+  missed_days: number
+  days_elapsed: number
+}
+
+export interface Page<T> {
+  items: T[]
+  page: number
+  limit: number
+  total: number
 }
 
 export interface DraftTodo {
@@ -311,6 +337,17 @@ export const api = {
 
   readAgenda(id: string): Promise<Agenda> {
     return request<Agenda>(`/agendas/${id}`)
+  },
+
+  listAgendas(
+    input: { status?: AgendaStatus; page?: number; limit?: number } = {},
+  ): Promise<Page<AgendaSummary>> {
+    const query = new URLSearchParams()
+    if (input.status) query.set('status', input.status)
+    if (input.page) query.set('page', String(input.page))
+    if (input.limit) query.set('limit', String(input.limit))
+    const search = query.toString()
+    return request<Page<AgendaSummary>>(`/agendas${search ? `?${search}` : ''}`)
   },
 
   generate(id: string): Promise<GenerateResult> {

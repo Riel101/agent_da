@@ -5,6 +5,7 @@ and let the reminder go out.
 from __future__ import annotations
 
 import uuid
+from datetime import timedelta
 
 import pytest
 
@@ -60,6 +61,7 @@ async def test_full_lifecycle(client, registered):
     assert approval.status_code == 200, approval.text
     body = approval.json()
     assert body["agenda"]["status"] == "active"
+    # One reminder per day: a Sunday's row is the weekly review instead of a daily.
     assert body["scheduled_reminders"] == 3
 
     dashboard = (await client.get("/api/v1/dashboard", headers=headers)).json()
@@ -207,17 +209,17 @@ async def test_reminder_is_dispatched_exactly_once(client, registered, monkeypat
     await _generate(client, headers, agenda["id"])
     await client.post(f"/api/v1/agendas/{agenda['id']}/approve", headers=headers)
 
-    from app.integrations.channels import registry
+    from app.integrations.channels.base import DeliveryResult
+    from app.services import reminder_service
 
     sent: list[str] = []
-    original = registry.deliver
 
-    async def spy(channel, message):
+    async def deliver_for_real(channel, message):
+        """Stand in for a configured provider, so the test does not depend on one."""
         sent.append(message.subject)
-        return await original(channel, message)
+        return DeliveryResult.sent("test", "test-message-id")
 
-    monkeypatch.setattr(registry, "deliver", spy)
-    monkeypatch.setattr("app.services.reminder_service.deliver", spy)
+    monkeypatch.setattr(reminder_service, "deliver", deliver_for_real)
 
     internal = {"X-Internal-Token": "test-internal-token"}
     first = await client.post("/api/v1/internal/dispatch", headers=internal)
@@ -230,6 +232,192 @@ async def test_reminder_is_dispatched_exactly_once(client, registered, monkeypat
     second = await client.post("/api/v1/internal/dispatch", headers=internal)
     assert second.json()["claimed"] == 0
     assert len(sent) == len(sent)
+
+
+@pytest.mark.asyncio
+async def test_sunday_gets_one_message_that_carries_the_days_plan(client, registered):
+    """A Sunday must not send a daily *and* a rollup.
+
+    The wizard promises "one reminder a day". The rollup is the only reminder on
+    its Sunday, and it includes that day's focus and to-dos so nothing is lost.
+    """
+    headers = registered["headers"]
+    today = local_today("Africa/Lagos")
+    # Put a Sunday inside the plan whatever weekday the suite happens to run on.
+    days_ahead = (7 - today.isoweekday()) % 7
+    agenda = await _create_agenda(client, headers, days=days_ahead + 2)
+    await _generate(client, headers, agenda["id"])
+    await client.post(f"/api/v1/agendas/{agenda['id']}/approve", headers=headers)
+
+    from sqlalchemy import select
+
+    from app.db.session import session_scope
+    from app.models import Reminder
+    from app.services import reminder_service
+
+    sunday = today + timedelta(days=days_ahead)
+
+    async with session_scope() as session:
+        rows = (
+            await session.execute(
+                select(Reminder).where(
+                    Reminder.agenda_id == uuid.UUID(agenda["id"]),
+                    Reminder.local_date == sunday,
+                )
+            )
+        ).scalars().all()
+        assert [row.kind.value for row in rows] == ["weekly_rollup"], (
+            "Sunday should carry exactly one reminder"
+        )
+        subject, body = await reminder_service.render_rollup(session, rows[0])
+
+    assert "Weekly review" in subject
+    assert "Today —" in body, "the rollup must carry that day's plan"
+    assert "Day " in body
+
+
+@pytest.mark.asyncio
+async def test_rollup_retires_a_superseded_sunday_daily(client, registered):
+    """A Sunday daily queued before this rule existed is retired, not delivered.
+
+    Plans approved before the fix already have a daily on every Sunday. The
+    day-close rollup step has to clean those up, or they would double up.
+    """
+    headers = registered["headers"]
+    today = local_today("Africa/Lagos")
+    days_ahead = (7 - today.isoweekday()) % 7
+    agenda = await _create_agenda(client, headers, days=days_ahead + 2)
+    await _generate(client, headers, agenda["id"])
+    await client.post(f"/api/v1/agendas/{agenda['id']}/approve", headers=headers)
+
+    from sqlalchemy import select
+
+    from app.db.session import session_scope
+    from app.models import Reminder, ReminderKind, ReminderStatus, SubAgenda
+    from app.services import reminder_service
+
+    sunday = today + timedelta(days=days_ahead)
+    agenda_id = uuid.UUID(agenda["id"])
+
+    async with session_scope() as session:
+        rollup = (
+            await session.execute(
+                select(Reminder).where(
+                    Reminder.agenda_id == agenda_id,
+                    Reminder.local_date == sunday,
+                    Reminder.kind == ReminderKind.WEEKLY_ROLLUP,
+                )
+            )
+        ).scalars().first()
+        sub = (
+            await session.execute(
+                select(SubAgenda).where(
+                    SubAgenda.agenda_id == agenda_id,
+                    SubAgenda.scheduled_date == sunday,
+                )
+            )
+        ).scalars().first()
+        # Recreate the legacy row: a pending daily on the same Sunday.
+        session.add(
+            Reminder(
+                user_id=rollup.user_id,
+                agenda_id=agenda_id,
+                sub_agenda_id=sub.id,
+                kind=ReminderKind.DAILY,
+                channel=rollup.channel,
+                status=ReminderStatus.PENDING,
+                scheduled_for=rollup.scheduled_for,
+                local_date=sunday,
+                dedupe_key=Reminder.build_dedupe_key(
+                    agenda_id, sub.id, ReminderKind.DAILY, sunday
+                ),
+            )
+        )
+
+    # What the day-close job does every 30 minutes.
+    async with session_scope() as session:
+        await reminder_service.schedule_weekly_rollups(session)
+
+    async with session_scope() as session:
+        rows = (
+            await session.execute(
+                select(Reminder).where(
+                    Reminder.agenda_id == agenda_id, Reminder.local_date == sunday
+                )
+            )
+        ).scalars().all()
+
+    assert [row.kind for row in rows] == [ReminderKind.WEEKLY_ROLLUP]
+
+
+@pytest.mark.asyncio
+async def test_unconfigured_channel_skips_instead_of_claiming_sent(client, registered):
+    """No SMTP means logged-and-dropped — and the log must say so.
+
+    This is the regression guard for the bug where the console sink reported a
+    successful delivery, so the reminder outbox read ``sent`` for messages that
+    nobody ever received.
+    """
+    headers = registered["headers"]
+    agenda = await _create_agenda(client, headers, days=3)
+    await _generate(client, headers, agenda["id"])
+    await client.post(f"/api/v1/agendas/{agenda['id']}/approve", headers=headers)
+
+    internal = {"X-Internal-Token": "test-internal-token"}
+    response = await client.post("/api/v1/internal/dispatch", headers=internal)
+    assert response.status_code == 200, response.text
+    stats = response.json()
+    assert stats["sent"] == 0, stats
+    assert stats["skipped"] >= 1, stats
+
+    from sqlalchemy import select
+
+    from app.db.session import session_scope
+    from app.models import Reminder, ReminderStatus
+
+    async with session_scope() as session:
+        rows = (
+            await session.execute(
+                select(Reminder).where(Reminder.agenda_id == uuid.UUID(agenda["id"]))
+            )
+        ).scalars().all()
+
+    skipped = [row for row in rows if row.status is ReminderStatus.SKIPPED]
+    assert skipped, "nothing was recorded as skipped"
+    assert any(row.status is ReminderStatus.SENT for row in rows) is False
+    # A skip is terminal: it must not consume the retry budget.
+    assert all(row.attempted == 1 for row in skipped)
+    assert all(row.provider == "console" for row in skipped)
+    assert "not sent" in (skipped[0].error or "")
+
+    # And it does not come back for another attempt.
+    again = await client.post("/api/v1/internal/dispatch", headers=internal)
+    assert again.json()["claimed"] == 0
+
+
+@pytest.mark.asyncio
+async def test_dispatch_reports_skipped_reminders_without_failing_them(
+    client, registered, monkeypatch
+):
+    """A sender that refuses to deliver leaves the row skipped, not failed."""
+    from app.integrations.channels.base import DeliveryResult
+    from app.models import ReminderStatus
+    from app.services import reminder_service
+
+    headers = registered["headers"]
+    agenda = await _create_agenda(client, headers, days=2)
+    await _generate(client, headers, agenda["id"])
+    await client.post(f"/api/v1/agendas/{agenda['id']}/approve", headers=headers)
+
+    async def refuses(channel, message):
+        return DeliveryResult.skipped("test", "provider said no")
+
+    monkeypatch.setattr(reminder_service, "deliver", refuses)
+
+    internal = {"X-Internal-Token": "test-internal-token"}
+    stats = (await client.post("/api/v1/internal/dispatch", headers=internal)).json()
+    assert stats == {"claimed": stats["claimed"], "sent": 0, "failed": 0, "skipped": stats["claimed"], "retry": 0}
+    assert ReminderStatus.SKIPPED.value == "skipped"
 
 
 @pytest.mark.asyncio

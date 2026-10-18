@@ -25,7 +25,9 @@ come.
 ## Quickstart (no credentials needed)
 
 With no `NVIDIA_API_KEY`, the agent uses a deterministic offline planner; with no SMTP or Twilio
-credentials, reminders are logged to the console. The whole product is exercisable locally.
+credentials, reminders are logged to the console and recorded as `skipped` — never as `sent` — so
+the reminder log never claims a delivery that did not happen. The whole product is exercisable
+locally; `python -m app.cli send-test` proves real delivery in one command.
 
 ```bash
 cd apps/api

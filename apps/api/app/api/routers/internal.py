@@ -36,9 +36,13 @@ async def materialize() -> dict:
 
 @router.post("/day-close")
 async def day_close() -> dict:
-    """Close finished days, apply missed-day penalties, refresh streaks."""
+    """Close finished days, apply penalties, refresh streaks and schedule rollups."""
     async with session_scope() as session:
-        return await materializer.close_finished_days(session)
+        closed = await materializer.close_finished_days(session)
+        # Same work as ``job_day_close``: the safety net must not do less than
+        # the job it stands in for.
+        closed["weekly_rollups"] = await reminder_service.schedule_weekly_rollups(session)
+    return closed
 
 
 @router.post("/weekly-rollups")

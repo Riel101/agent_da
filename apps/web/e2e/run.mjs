@@ -19,11 +19,12 @@ import * as capture from './capture.mjs'
 import * as planning from './planning.mjs'
 import * as failed from './failed.mjs'
 import * as focus from './focus.mjs'
+import * as plans from './plans.mjs'
 import * as snap from './snap.mjs'
 
-const PHASES = { capture, planning, failed, focus, snap }
+const PHASES = { capture, planning, failed, focus, snap, plans }
 // Planning runs last: it is the only phase that needs AGENT_AUTOSTART=false.
-const ORDER = ['capture', 'snap', 'focus', 'failed', 'planning']
+const ORDER = ['capture', 'plans', 'snap', 'focus', 'failed', 'planning']
 
 const apiUrl = new URL(config.api)
 const apiHost = apiUrl.hostname

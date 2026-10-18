@@ -2,7 +2,8 @@
 
 Everything below works with **no external accounts**. With no `NVIDIA_API_KEY`, the agent uses a
 deterministic offline planner; with no SMTP or Twilio credentials, reminders are logged to the
-console instead of sent. That means the whole product is exercisable locally and in CI.
+console instead of sent, and are recorded as `skipped` so the log never claims a delivery that did
+not happen. That means the whole product is exercisable locally and in CI.
 
 ## Requirements
 
@@ -106,9 +107,9 @@ python -m app.cli demo
 ```
 
 The demo creates a user and a 30-day agenda, runs the agent, prints the plan and its final day,
-approves it, dispatches the first reminder (to the console here), completes today's to-dos, shows
-the points breakdown, then simulates three elapsed days so you can watch the missed-day penalty and
-the streak reset happen.
+approves it, dispatches the first reminder (logged to the console here, and reported as `skipped`
+because no SMTP credentials are set), completes today's to-dos, shows the points breakdown, then
+simulates three elapsed days so you can watch the missed-day penalty and the streak reset happen.
 
 ## Operational commands
 
@@ -117,8 +118,49 @@ The same jobs the in-process scheduler runs, available for cron or manual use:
 ```bash
 python -m app.cli dispatch      # send reminders that are due
 python -m app.cli materialize   # expand upcoming to-dos
-python -m app.cli day-close     # close elapsed days, apply penalties, refresh streaks
+python -m app.cli day-close     # close elapsed days, penalties, streaks, rollups
+python -m app.cli reminders     # what was queued, what went out, what was skipped
+python -m app.cli send-test     # prove delivery works, end to end
+python -m app.cli mail-catcher  # a local SMTP sink, for delivery with no account
 ```
+
+### Reminders: making delivery real
+
+With no credentials the reminder pipeline is fully exercised but nothing leaves the machine: the
+console channel logs the rendered reminder and reports it as **`skipped`**, never `sent`. A reminder
+row that says `sent` has genuinely reached a provider.
+
+`npm run dev:all` starts a **local mail catcher** and points the API at it, so reminders are really
+sent over SMTP and saved as `.eml` files under `$TMPDIR/agentda-mail` (`MAIL_CATCHER=false npm run
+dev:all` turns it off). To run it on its own:
+
+```bash
+python -m app.cli mail-catcher --port 1025 --out /tmp/agentda-mail
+```
+
+Check what your instance is actually doing:
+
+```bash
+python -m app.cli reminders          # per-channel verdict + the log
+python -m app.cli send-test          # sends one real message; exit 0 only if a provider accepted it
+python -m app.cli send-test --agenda <id>   # sends that plan's next real daily reminder, unrecorded
+```
+
+To deliver to a real inbox, point `SMTP_HOST`/`SMTP_PORT`/`SMTP_USER`/`SMTP_PASSWORD` at a provider
+(see `.env.example` for a Gmail app-password example) and set `SMTP_STARTTLS=true`. `send-test`
+should then print `outcome: sent` and exit 0. WhatsApp works the same way through `TWILIO_*` or
+`META_WHATSAPP_*`; a WhatsApp reminder with no `phone_e164` on the user is skipped rather than
+retried.
+
+The `.env` file lives at the repository root and is read from any working directory. If a setting
+appears to be ignored, `python -m app.cli reminders` names the resolved sender for each channel.
+
+### One reminder a day, including Sunday
+
+Every day of a plan gets exactly one reminder. A Sunday's reminder *is* the weekly review, which also
+carries that day's focus and to-dos, so a daily and a rollup never land on the same day. Plans
+approved before this rule are cleaned up by the day-close job, which retires any Sunday daily that a
+rollup supersedes.
 
 ## Tests
 
@@ -127,10 +169,10 @@ cd apps/api
 python -m pytest -q
 ```
 
-36 tests covering auth and token rotation, graph invariants (dating, day count, the finale, chunked
+40 tests covering auth and token rotation, graph invariants (dating, day count, the finale, chunked
 long plans, clarifying questions, per-day regeneration, approval), the full HTTP lifecycle from
-signup to agenda completion and the perfect-run bonus, reminder idempotency, and missed-day
-penalties.
+signup to agenda completion and the perfect-run bonus, reminder idempotency, skipped-channel
+handling and the one-message-per-Sunday rule, and missed-day penalties.
 
 The suite configures its environment before importing the app (see `tests/conftest.py`) and uses a
 file-backed SQLite database under `/tmp/opencode/`.

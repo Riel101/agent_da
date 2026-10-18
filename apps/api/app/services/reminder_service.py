@@ -28,6 +28,7 @@ from app.integrations.channels.registry import channel_status, deliver
 from app.models import (
     Agenda,
     AgendaStatus,
+    ChannelOutcome,
     PointsLedgerEntry,
     Reminder,
     ReminderChannel,
@@ -59,7 +60,13 @@ def fire_time(agenda: Agenda, day: date, *, now: datetime | None = None) -> date
 async def schedule_agenda_reminders(
     session: AsyncSession, agenda: Agenda, *, expand_preview: bool = False
 ) -> dict[str, int]:
-    """Create one reminder row per remaining day. Safe to call repeatedly."""
+    """Create one reminder row per remaining day. Safe to call repeatedly.
+
+    Exactly one row per day, always — on a Sunday that row is the weekly review,
+    which carries the day's plan as well (see :func:`render_rollup`). Emitting a
+    daily *and* a rollup on the same day would deliver two messages and
+    contradict the "one reminder a day" the wizard promises.
+    """
     today = local_today(agenda.timezone)
     days = (
         await session.execute(
@@ -71,7 +78,11 @@ async def schedule_agenda_reminders(
 
     created = 0
     for sub in days:
-        key = Reminder.build_dedupe_key(agenda.id, sub.id, ReminderKind.DAILY, sub.scheduled_date)
+        # ISO weekday 7 == Sunday.
+        is_sunday = sub.scheduled_date.isoweekday() == 7
+        kind = ReminderKind.WEEKLY_ROLLUP if is_sunday else ReminderKind.DAILY
+        sub_agenda_id = None if is_sunday else sub.id
+        key = Reminder.build_dedupe_key(agenda.id, sub_agenda_id, kind, sub.scheduled_date)
         exists = await session.scalar(select(Reminder.id).where(Reminder.dedupe_key == key))
         if exists:
             continue
@@ -79,8 +90,8 @@ async def schedule_agenda_reminders(
             Reminder(
                 user_id=agenda.user_id,
                 agenda_id=agenda.id,
-                sub_agenda_id=sub.id,
-                kind=ReminderKind.DAILY,
+                sub_agenda_id=sub_agenda_id,
+                kind=kind,
                 channel=agenda.reminder_channel,
                 status=ReminderStatus.PENDING,
                 scheduled_for=fire_time(agenda, sub.scheduled_date),
@@ -102,42 +113,82 @@ async def schedule_agenda_reminders(
     return {"scheduled_reminders": created, "expanded_days": expanded}
 
 
+async def _retire_pending_dailies(
+    session: AsyncSession, agenda_id: uuid.UUID, day: date
+) -> int:
+    """Delete daily reminders that a rollup supersedes.
+
+    Only ``pending`` rows are touched: anything already claimed or sent is left
+    alone, so a rollup can never erase a delivery that happened.
+    """
+    rows = (
+        await session.execute(
+            select(Reminder).where(
+                Reminder.agenda_id == agenda_id,
+                Reminder.local_date == day,
+                Reminder.kind == ReminderKind.DAILY,
+                Reminder.status == ReminderStatus.PENDING,
+            )
+        )
+    ).scalars().all()
+    for row in rows:
+        await session.delete(row)
+    return len(rows)
+
+
+async def schedule_agenda_rollup(session: AsyncSession, agenda: Agenda) -> int:
+    """Queue ``agenda``'s next Sunday rollup if it is missing. Returns 1 if created.
+
+    Approving a plan already lays down a rollup for every Sunday in it, so this
+    is the day-close safety net: it covers plans approved before that rule, and
+    retires any Sunday daily still queued for the same date, whichever was
+    scheduled first.
+    """
+    if agenda.status is not AgendaStatus.ACTIVE:
+        return 0
+    today = local_today(agenda.timezone)
+    if today > agenda.end_date:
+        return 0
+    # ISO weekday 7 == Sunday.
+    days_ahead = (7 - today.isoweekday()) % 7
+    target = today + timedelta(days=days_ahead)
+    if target > agenda.end_date:
+        return 0
+
+    retired = await _retire_pending_dailies(session, agenda.id, target)
+    if retired:
+        logger.info("weekly rollup: retired %s superseded daily reminder(s)", retired)
+
+    key = Reminder.build_dedupe_key(agenda.id, None, ReminderKind.WEEKLY_ROLLUP, target)
+    exists = await session.scalar(select(Reminder.id).where(Reminder.dedupe_key == key))
+    if exists:
+        return 0
+
+    session.add(
+        Reminder(
+            user_id=agenda.user_id,
+            agenda_id=agenda.id,
+            sub_agenda_id=None,
+            kind=ReminderKind.WEEKLY_ROLLUP,
+            channel=agenda.reminder_channel,
+            status=ReminderStatus.PENDING,
+            scheduled_for=fire_time(agenda, target),
+            local_date=target,
+            dedupe_key=key,
+        )
+    )
+    return 1
+
+
 async def schedule_weekly_rollups(session: AsyncSession) -> int:
-    """Sunday rollups for active agendas, delivered through the same channel."""
+    """Sunday rollups for every active agenda. Driven by the day-close job."""
     agendas = (
         await session.execute(select(Agenda).where(Agenda.status == AgendaStatus.ACTIVE))
     ).scalars().all()
 
     created = 0
     for agenda in agendas:
-        today = local_today(agenda.timezone)
-        if today > agenda.end_date:
-            continue
-        # ISO weekday 7 == Sunday.
-        days_ahead = (7 - today.isoweekday()) % 7
-        target = today + timedelta(days=days_ahead)
-        if target > agenda.end_date:
-            continue
-
-        key = Reminder.build_dedupe_key(agenda.id, None, ReminderKind.WEEKLY_ROLLUP, target)
-        exists = await session.scalar(select(Reminder.id).where(Reminder.dedupe_key == key))
-        if exists:
-            continue
-
-        session.add(
-            Reminder(
-                user_id=agenda.user_id,
-                agenda_id=agenda.id,
-                sub_agenda_id=None,
-                kind=ReminderKind.WEEKLY_ROLLUP,
-                channel=agenda.reminder_channel,
-                status=ReminderStatus.PENDING,
-                scheduled_for=fire_time(agenda, target),
-                local_date=target,
-                dedupe_key=key,
-            )
-        )
-        created += 1
+        created += await schedule_agenda_rollup(session, agenda)
     await session.flush()
     return created
 
@@ -270,7 +321,44 @@ async def render_rollup(session: AsyncSession, reminder: Reminder) -> tuple[str,
         state = status.value if hasattr(status, "value") else str(status)
         lines.append(f"{scheduled_date.isoformat()}  {int(done or 0)}/{int(total or 0)}  ({state})")
 
+    # The rollup is the only message on its Sunday, so it carries that day's plan
+    # too — the daily reminder for the same date is never scheduled.
+    sub = (
+        await session.execute(
+            select(SubAgenda).where(
+                SubAgenda.agenda_id == agenda.id,
+                SubAgenda.scheduled_date == reminder.local_date,
+            )
+        )
+    ).scalars().first()
+
     subject = f"Weekly review — {agenda.title}"
+    if sub is not None:
+        todos = (
+            await session.execute(
+                select(Todo).where(Todo.sub_agenda_id == sub.id).order_by(Todo.position)
+            )
+        ).scalars().all()
+        lines.extend(["", f"Today — {sub.title}"])
+        if sub.description:
+            lines.append(sub.description)
+        if sub.expected_outcome:
+            lines.append(f"Done when: {sub.expected_outcome}")
+        lines.append("")
+        if todos:
+            for todo in todos:
+                mark = "x" if todo.is_done else " "
+                lines.append(f"[{mark}] {todo.title}")
+        else:
+            lines.append("(No to-dos recorded for today yet.)")
+        done = sum(1 for todo in todos if todo.is_done)
+        lines.append(
+            f"Day {sub.day_index} of {agenda.timeframe_days} · {done}/{len(todos)} done"
+        )
+        subject = (
+            f"Weekly review and Day {sub.day_index} of {agenda.timeframe_days} — {agenda.title}"
+        )
+
     return subject[:300], "\n".join(lines)
 
 
@@ -360,6 +448,13 @@ async def send_one(reminder_id: uuid.UUID) -> str:
             reminder.status = ReminderStatus.SENT
             reminder.sent_at = utc_now()
             return "sent"
+
+        if result.outcome is ChannelOutcome.SKIPPED:
+            # The channel refused to deliver (nothing configured, or no number to
+            # send to). Retrying cannot change that, so do not burn the attempts
+            # and do not report a failure the operator should act on differently.
+            reminder.status = ReminderStatus.SKIPPED
+            return "skipped"
 
         if reminder.attempted >= settings.dispatch_max_attempts:
             reminder.status = ReminderStatus.FAILED
