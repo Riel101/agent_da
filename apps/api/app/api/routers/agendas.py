@@ -87,14 +87,14 @@ async def update_agenda(
 
 
 @router.delete("/{agenda_id}", response_model=MessageOut)
-async def cancel_agenda(
+async def delete_agenda(
     agenda_id: uuid.UUID,
     user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_db),
 ) -> MessageOut:
-    agenda = await agenda_service.get_agenda(session, agenda_id, user.id)
-    agenda.status = AgendaStatus.CANCELLED
-    return MessageOut(detail="Agenda cancelled")
+    agenda = await agenda_service.get_agenda(session, agenda_id, user.id, lock=True)
+    await agenda_service.delete_agenda(session, agenda)
+    return MessageOut(detail="Agenda deleted")
 
 
 @router.post("/{agenda_id}/archive", response_model=MessageOut)

@@ -8,6 +8,10 @@ venv/
 .env.*
 !.env.example
 
+# Vendored API deps: an optional offline fallback, not source. Prefer a venv
+# with `pip install -r apps/api/requirements.txt`.
+apps/api/.pylibs/
+
 # --- Databases ------------------------------------------------------------
 *.db
 *.sqlite

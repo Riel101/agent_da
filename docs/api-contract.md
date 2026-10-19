@@ -62,7 +62,7 @@ Implemented: `apps/api/app/api/routers/auth.py` · verified by `tests/test_auth.
 | POST | `/agendas` | create draft |
 | GET | `/agendas/{id}` | agenda + summary counts |
 | PATCH | `/agendas/{id}` | editable while `draft`/`ready` (title, description, timeframe, reminder settings) |
-| DELETE | `/agendas/{id}` | soft delete → `cancelled` |
+| DELETE | `/agendas/{id}` | hard delete; days, to-dos and reminders go with it, earned points stay on the ledger |
 | POST | `/agendas/{id}/generate` | create a draft and start the graph → `202 { draft_id }`; reuses an in-flight draft |
 | GET | `/agendas/{id}/draft` | poll run/review state, clarifying questions and the full plan |
 | POST | `/agendas/{id}/draft/answers` | resume a clarifying interrupt → `202` |
@@ -73,7 +73,7 @@ Implemented: `apps/api/app/api/routers/auth.py` · verified by `tests/test_auth.
 | PATCH | `/agendas/{id}/days/{day_index}` | edit title/description/outcome/effort (flags the day `is_user_edited`) |
 | GET | `/agendas/{id}/progress` | completion %, points, streak, missed days, per-day breakdown |
 | POST | `/agendas/{id}/archive` | archive a running or finished agenda |
-| DELETE | `/agendas/{id}` | soft delete → `cancelled` |
+| DELETE | `/agendas/{id}` | hard delete; days, to-dos and reminders go with it, earned points stay on the ledger |
 
 Notes that matter for the client:
 

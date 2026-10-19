@@ -14,15 +14,15 @@ next. They arrive to check where they are, to reopen a half-finished draft, or t
 themselves that something is still going. They must see each plan's status and progress at a glance
 and be one click from the wizard that owns it.
 **Constraints:** frozen REST contract (`docs/api-contract.md`) — this surface only consumes
-`GET /agendas?status=&page=&limit=`; the list envelope is `{items, page, limit, total}`. JWT bearer,
-React + Vite + Tailwind in `apps/web`, mobile-first. The wizard at `/new?agenda=<id>` stays the only
-place a plan is read or edited. Binding: no points or streaks shown as a scoreboard — progress is
-to-do counts only; the index must not become a dashboard.
+`GET /agendas?status=&page=&limit=` and `DELETE /agendas/{id}`; the list envelope is
+`{items, page, limit, total}`. JWT bearer, React + Vite + Tailwind in `apps/web`, mobile-first. The
+wizard at `/new?agenda=<id>` stays the only place a plan is read or edited. Binding: no points or
+streaks shown as a scoreboard — progress is to-do counts only; the index must not become a
+dashboard.
 **Open decisions:** the today dashboard and the progress views remain unbuilt and out of scope; the
 index does not pre-empt them.
 **Anti-goals:** stat tiles, heatmaps, streak counters, sparklines, or any fabricated chart; a card
-grid; per-plan colour coding; a second accent; a delete/archive action invented ahead of the
-contract's UI.
+grid; per-plan colour coding; a second accent; an archive action invented ahead of the contract's UI.
 
 ## Direction contract
 

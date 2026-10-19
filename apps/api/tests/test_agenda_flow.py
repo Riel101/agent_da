@@ -540,3 +540,85 @@ async def test_cross_account_access_is_denied(client, registered):
 
     listing = (await client.get("/api/v1/agendas", headers=other_headers)).json()
     assert listing["total"] == 0
+
+
+@pytest.mark.asyncio
+async def test_deleting_a_plan_removes_it_and_keeps_earned_points(client, registered):
+    headers = registered["headers"]
+    agenda = await _create_agenda(client, headers, days=2)
+    await _generate(client, headers, agenda["id"])
+    await client.post(f"/api/v1/agendas/{agenda['id']}/approve", headers=headers)
+
+    block = (await client.get("/api/v1/dashboard", headers=headers)).json()["today"][0]
+    await client.post(f"/api/v1/todos/{block['todos'][0]['id']}/complete", headers=headers)
+    me = (await client.get("/api/v1/users/me", headers=headers)).json()
+    assert me["points_balance"] == 10
+
+    response = await client.delete(f"/api/v1/agendas/{agenda['id']}", headers=headers)
+    assert response.status_code == 200, response.text
+    assert response.json()["detail"] == "Agenda deleted"
+
+    # Gone from the index, and no longer readable.
+    listing = (await client.get("/api/v1/agendas", headers=headers)).json()
+    assert listing["total"] == 0
+    missing = await client.get(f"/api/v1/agendas/{agenda['id']}", headers=headers)
+    assert missing.status_code == 404
+    assert missing.json()["error"]["code"] == "AGENDA_NOT_FOUND"
+
+    # Its days, to-dos and reminders went with it, so nothing more is sent.
+    from sqlalchemy import func, select
+
+    from app.db.session import session_scope
+    from app.models import Reminder, SubAgenda, Todo
+
+    async with session_scope() as session:
+        agenda_id = uuid.UUID(agenda["id"])
+        for model in (SubAgenda, Todo, Reminder):
+            count = await session.scalar(
+                select(func.count()).select_from(model).where(model.agenda_id == agenda_id)
+            )
+            assert count == 0, f"{model.__name__} rows survived the delete"
+
+    # Points already earned are kept; the ledger rows just stop pointing at the plan.
+    me = (await client.get("/api/v1/users/me", headers=headers)).json()
+    assert me["points_balance"] == 10
+    ledger = (await client.get("/api/v1/users/me/points", headers=headers)).json()
+    assert ledger["items"][0]["agenda_id"] is None
+
+    # The today view no longer has a block for it.
+    dashboard = (await client.get("/api/v1/dashboard", headers=headers)).json()
+    assert dashboard["today"] == []
+
+
+@pytest.mark.asyncio
+async def test_deleting_a_draft_plan_is_allowed(client, registered):
+    headers = registered["headers"]
+    agenda = await _create_agenda(client, headers, days=3)
+
+    response = await client.delete(f"/api/v1/agendas/{agenda['id']}", headers=headers)
+    assert response.status_code == 200, response.text
+
+    listing = (await client.get("/api/v1/agendas", headers=headers)).json()
+    assert listing["total"] == 0
+
+
+@pytest.mark.asyncio
+async def test_another_account_cannot_delete_your_plan(client, registered):
+    headers = registered["headers"]
+    agenda = await _create_agenda(client, headers, days=2)
+
+    other = await client.post(
+        "/api/v1/auth/signup",
+        json={
+            "email": "deleter@example.com",
+            "password": "another-good-password",
+            "timezone": "UTC",
+        },
+    )
+    other_headers = {"Authorization": f"Bearer {other.json()['access_token']}"}
+
+    response = await client.delete(f"/api/v1/agendas/{agenda['id']}", headers=other_headers)
+    assert response.status_code == 403
+
+    still_there = await client.get(f"/api/v1/agendas/{agenda['id']}", headers=headers)
+    assert still_there.status_code == 200

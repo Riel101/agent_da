@@ -69,19 +69,21 @@ npm install
 npm run dev:all
 ```
 
-`dev:all` starts the API (`:8000`) and Vite (`:5173`) together — Ctrl-C stops both. It runs the API
-from `apps/api/.pylibs` unless a virtualenv with the dependencies is present. Override with
-`API_PORT`, `WEB_PORT`, `DATABASE_URL`, `AGENT_AUTOSTART`, `SCHEDULER_ENABLED`, or `DEV_PYTHON`.
-Then open http://localhost:5173 and sign in.
+`dev:all` starts the API (`:8000`) and Vite (`:5173`) together — Ctrl-C stops both. It prefers an
+interpreter that already has the API dependencies: `DEV_PYTHON` if set, otherwise the venv in
+`apps/api` or the repo root. Override with `API_PORT`, `WEB_PORT`, `DATABASE_URL`, `AGENT_AUTOSTART`,
+`SCHEDULER_ENABLED`, or `DEV_PYTHON`. Then open http://localhost:5173 and sign in.
+
+The old `apps/api/.pylibs` directory is no longer committed. If it is still lying around it is used
+only as a fallback for an interpreter that cannot import `uvicorn`/`pydantic_core` on its own.
 
 To run the two servers by hand instead:
 
 ```bash
 # terminal 1 — API
 cd apps/api
-PYTHONPATH=.pylibs SCHEDULER_ENABLED=false \
-  DATABASE_URL="sqlite+aiosqlite:///$(pwd)/agent_da.db" \
-  python3 -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+SCHEDULER_ENABLED=false DATABASE_URL="sqlite+aiosqlite:///$(pwd)/../../agent_da.db" \
+  .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 
 # terminal 2 — web
 cd apps/web && npm run dev

@@ -229,3 +229,7 @@ lets a paused human-in-the-loop run resume after a deploy.
 plan; `REMINDER_RETENTION_DAYS` (90) governs how long they are kept. Completed and archived agendas
 keep their plan and ledger indefinitely; unapproved drafts are cancellable after
 `CANCEL_UNAPPROVED_DRAFTS_AFTER_DAYS`.
+
+Deleting a plan is a hard delete: its days, to-dos, drafts and reminders are removed, and its
+ledger rows keep their `delta` but have `agenda_id`, `sub_agenda_id` and `todo_id` cleared to NULL.
+Points already earned are never taken away.

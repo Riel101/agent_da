@@ -5,7 +5,7 @@ from __future__ import annotations
 import uuid
 from datetime import date, timedelta
 
-from sqlalchemy import case, delete, func, select
+from sqlalchemy import case, delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
@@ -13,7 +13,10 @@ from app.core.errors import ConflictError, NotFoundError, PermissionDeniedError,
 from app.core.timezones import local_today
 from app.models import (
     Agenda,
+    AgendaDraft,
     AgendaStatus,
+    PointsLedgerEntry,
+    Reminder,
     ReminderChannel,
     SubAgenda,
     SubAgendaStatus,
@@ -159,6 +162,30 @@ async def update_agenda(
 
     await session.flush()
     return agenda
+
+
+async def delete_agenda(session: AsyncSession, agenda: Agenda) -> None:
+    """Remove an agenda and everything that belongs to it.
+
+    Points already earned stay on the ledger (the user keeps them); only the
+    references to the deleted plan are cleared, which is what the ``SET NULL``
+    foreign keys would do on Postgres. The rows are detached explicitly so the
+    same behaviour holds on SQLite, where foreign keys are not enforced.
+
+    Reminders go with the plan, so nothing more is sent for it. A generation
+    still running for a deleted draft finds no row and stops quietly.
+    """
+    await session.execute(
+        update(PointsLedgerEntry)
+        .where(PointsLedgerEntry.agenda_id == agenda.id)
+        .values(agenda_id=None, sub_agenda_id=None, todo_id=None)
+    )
+    await session.execute(delete(Reminder).where(Reminder.agenda_id == agenda.id))
+    await session.execute(delete(Todo).where(Todo.agenda_id == agenda.id))
+    await session.execute(delete(SubAgenda).where(SubAgenda.agenda_id == agenda.id))
+    await session.execute(delete(AgendaDraft).where(AgendaDraft.agenda_id == agenda.id))
+    await session.delete(agenda)
+    await session.flush()
 
 
 async def _aggregate(session: AsyncSession, agenda_ids: list[uuid.UUID]) -> dict:
