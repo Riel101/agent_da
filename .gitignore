@@ -19,6 +19,7 @@ venv/
 .ruff_cache/
 .coverage
 htmlcov/
+.impeccaple/
 
 # --- Frontend (apps/web, not built yet) -----------------------------------
 node_modules/

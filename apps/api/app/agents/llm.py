@@ -13,6 +13,7 @@ import re
 from dataclasses import dataclass
 from typing import Any, TypeVar
 
+from langchain_core.callbacks import AsyncCallbackHandler
 from langchain_core.messages import BaseMessage
 from pydantic import BaseModel, ValidationError
 
@@ -33,6 +34,28 @@ class LLMResult:
     tokens_out: int = 0
     model: str = ""
     repaired: bool = False
+
+
+class _UsageCallback(AsyncCallbackHandler):
+    """Collect token usage from the underlying chat call.
+
+    ``langchain-nvidia-ai-endpoints`` (1.4.x) rejects ``include_raw=True`` on
+    ``with_structured_output``, so the raw message is never handed back and its
+    usage metadata has to be read off the callback stream instead.
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.tokens_in = 0
+        self.tokens_out = 0
+
+    async def on_llm_end(self, response: Any, **_: Any) -> None:
+        for batch in getattr(response, "generations", None) or []:
+            for generation in batch:
+                message = getattr(generation, "message", None)
+                usage = getattr(message, "usage_metadata", None) or {}
+                self.tokens_in += int(usage.get("input_tokens") or 0)
+                self.tokens_out += int(usage.get("output_tokens") or 0)
 
 
 class FakeLLM:
@@ -109,32 +132,25 @@ async def structured_call(
 
 
 async def _attempt(llm: Any, schema: type[TModel], messages: list[BaseMessage]) -> LLMResult:
-    runnable = llm.with_structured_output(schema, include_raw=True)
-    result = await runnable.ainvoke(messages)
+    # ``include_raw=True`` is not supported by langchain-nvidia-ai-endpoints
+    # (1.4.x raises NotImplementedError), so ask for the validated object
+    # directly and harvest token usage from a callback instead.
+    usage = _UsageCallback()
+    runnable = llm.with_structured_output(schema)
+    parsed = await runnable.ainvoke(messages, config={"callbacks": [usage]})
 
-    if isinstance(result, dict) and "parsed" in result:
-        parsed = result.get("parsed")
-        raw_message = result.get("raw")
-        usage = _usage(raw_message)
-        if parsed is None:
-            raise ValueError("model returned no parsable output")
-        if isinstance(parsed, dict):
-            parsed = schema.model_validate(parsed)
-        return LLMResult(parsed=parsed, model=_model_name(llm), **usage)
-
-    if isinstance(result, BaseModel):
-        return LLMResult(parsed=result, model=_model_name(llm))
-    raise ValueError("unexpected structured output shape")
-
-
-def _usage(raw: Any) -> dict[str, int]:
-    usage = getattr(raw, "usage_metadata", None) or {}
-    if isinstance(raw, dict):
-        usage = raw.get("usage_metadata") or usage
-    return {
-        "tokens_in": int(usage.get("input_tokens") or usage.get("prompt_tokens") or 0),
-        "tokens_out": int(usage.get("output_tokens") or usage.get("completion_tokens") or 0),
-    }
+    if parsed is None:
+        raise ValueError("model returned no parsable output")
+    if isinstance(parsed, dict):
+        parsed = schema.model_validate(parsed)
+    if not isinstance(parsed, BaseModel):
+        raise ValueError("unexpected structured output shape")
+    return LLMResult(
+        parsed=parsed,
+        model=_model_name(llm),
+        tokens_in=usage.tokens_in,
+        tokens_out=usage.tokens_out,
+    )
 
 
 def _model_name(llm: Any) -> str:
