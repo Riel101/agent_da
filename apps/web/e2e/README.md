@@ -24,6 +24,7 @@ Individual phases:
 
 ```bash
 npm run e2e:capture    # desktop, review, clarify, mobile, approved, …
+npm run e2e:today      # the daily surface: empty, checked off, persisted
 npm run e2e:plans      # the plan index: populated, filtered, empty
 npm run e2e:planning   # the card mid-generation (needs AGENT_AUTOSTART=false)
 npm run e2e:failed     # the failure notice
@@ -74,8 +75,9 @@ autostarts, run that phase with a managed server instead.
 
 - Screenshots: `.impeccable/review/*.png` — `desktop`, `mobile`, `planning`,
   `clarify`, `review`, `review-top`, `mobile-review`, `mobile-review-top`,
-  `approved`, `failed`, `focus-field`, `focus-tab`, `plans`, `plans-filtered`,
-  `plans-mobile`, `plans-empty`, `plans-delete-armed`, `plans-deleted`.
+  `approved`, `failed`, `focus-field`, `focus-tab`, `today`, `today-empty`,
+  `today-mobile`, `plans`, `plans-filtered`, `plans-mobile`, `plans-empty`,
+  `plans-delete-armed`, `plans-deleted`.
 - HTML snapshots: `E2E_SNAP/*.html` — `capture`, `capture-mobile`, `review`,
   `review-mobile`.
 

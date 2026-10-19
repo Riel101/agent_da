@@ -170,6 +170,73 @@ export interface DayDetail {
   todos: Todo[]
 }
 
+export interface AgendaCard {
+  id: string
+  title: string
+  status: AgendaStatus
+  start_date: string
+  end_date: string
+  progress_pct: number
+  current_day_index: number | null
+  reminder_channel: ReminderChannel
+  reminder_time: string
+}
+
+export interface DashboardTotals {
+  points_balance: number
+  current_streak: number
+  longest_streak: number
+}
+
+/** One plan's slice of today: the day's milestone and its checkable to-dos. */
+export interface TodayBlock {
+  agenda_id: string
+  agenda_title: string
+  sub_agenda_id: string
+  day_index: number
+  title: string
+  description: string | null
+  expected_outcome: string | null
+  todos: Todo[]
+  done: number
+  total: number
+}
+
+export interface Dashboard {
+  local_date: string
+  timezone: string
+  totals: DashboardTotals
+  today: TodayBlock[]
+  agendas: AgendaCard[]
+}
+
+export interface CompletionPoints {
+  awarded: number
+  reason: string
+  balance: number
+  bonuses: string[]
+}
+
+export interface DayCompletion {
+  complete: boolean
+  done: number
+  total: number
+  bonus_awarded: number
+}
+
+export interface StreakSnapshot {
+  current: number
+  longest: number
+}
+
+export interface CompleteResponse {
+  todo: Todo
+  points: CompletionPoints
+  day: DayCompletion
+  streak: StreakSnapshot
+  agenda_completed: boolean
+}
+
 export interface GenerateResult {
   draft_id: string
   status: DraftStatus
@@ -341,6 +408,11 @@ export const api = {
     return request<User>('/users/me', { method: 'PATCH', body: input })
   },
 
+  /** Everything the Today surface needs, in the user's local date. */
+  dashboard(signal?: AbortSignal): Promise<Dashboard> {
+    return request<Dashboard>('/dashboard', { signal })
+  },
+
   createAgenda(input: AgendaCreateInput): Promise<Agenda> {
     return request<Agenda>('/agendas', { method: 'POST', body: input })
   },
@@ -414,6 +486,14 @@ export const api = {
 
   deleteTodo(todoId: string): Promise<{ detail: string }> {
     return request<{ detail: string }>(`/todos/${todoId}`, { method: 'DELETE' })
+  },
+
+  completeTodo(todoId: string): Promise<CompleteResponse> {
+    return request<CompleteResponse>(`/todos/${todoId}/complete`, { method: 'POST' })
+  },
+
+  uncompleteTodo(todoId: string): Promise<CompleteResponse> {
+    return request<CompleteResponse>(`/todos/${todoId}/uncomplete`, { method: 'POST' })
   },
 
   deleteAgenda(id: string): Promise<{ detail: string }> {

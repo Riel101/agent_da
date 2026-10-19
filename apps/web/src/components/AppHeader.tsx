@@ -8,11 +8,12 @@ import { useAuth } from '../lib/auth'
  */
 
 const NAV = [
+  { to: '/today', label: 'Today' },
   { to: '/plans', label: 'Plans' },
   { to: '/new', label: 'New plan' },
 ] as const
 
-export type NavKey = 'plans' | 'new'
+export type NavKey = 'today' | 'plans' | 'new'
 
 export function AppHeader({ current }: { current: NavKey }) {
   const { user, signOut } = useAuth()
@@ -21,7 +22,7 @@ export function AppHeader({ current }: { current: NavKey }) {
     <header className="border-b border-ground-line">
       <div className="mx-auto flex w-full max-w-[720px] items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <div className="flex min-w-0 items-center gap-3">
-          <Link to="/plans" className="text-[15px] font-bold tracking-[-0.01em] text-sheet">
+          <Link to="/today" className="text-[15px] font-bold tracking-[-0.01em] text-sheet">
             AgentDa
           </Link>
           <nav aria-label="Primary" className="flex items-center gap-1">

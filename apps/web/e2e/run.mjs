@@ -2,7 +2,7 @@
 /**
  * Web smoke harness orchestrator.
  *
- *   node e2e/run.mjs [all|capture|planning|failed|focus|snap]
+ *   node e2e/run.mjs [all|capture|today|plans|planning|failed|focus|snap]
  *
  * With no arguments this boots a throwaway API (on its own SQLite file) plus
  * Vite, drives the first-agenda flow in headless Chrome, writes the review
@@ -21,10 +21,11 @@ import * as failed from './failed.mjs'
 import * as focus from './focus.mjs'
 import * as plans from './plans.mjs'
 import * as snap from './snap.mjs'
+import * as today from './today.mjs'
 
-const PHASES = { capture, planning, failed, focus, snap, plans }
+const PHASES = { capture, planning, failed, focus, snap, plans, today }
 // Planning runs last: it is the only phase that needs AGENT_AUTOSTART=false.
-const ORDER = ['capture', 'plans', 'snap', 'focus', 'failed', 'planning']
+const ORDER = ['capture', 'today', 'plans', 'snap', 'focus', 'failed', 'planning']
 
 const apiUrl = new URL(config.api)
 const apiHost = apiUrl.hostname

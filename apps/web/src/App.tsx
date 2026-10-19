@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import NewAgenda from './NewAgenda'
 import Plans from './Plans'
 import SignIn from './SignIn'
+import Today from './Today'
 import { useAuth } from './lib/auth'
 
 export default function App() {
@@ -26,10 +27,11 @@ export default function App() {
 
   return (
     <Routes>
-      <Route path="/signin" element={signedIn ? <Navigate to="/plans" replace /> : <SignIn />} />
+      <Route path="/signin" element={signedIn ? <Navigate to="/today" replace /> : <SignIn />} />
+      <Route path="/today" element={signedIn ? <Today /> : <Navigate to="/signin" replace />} />
       <Route path="/plans" element={signedIn ? <Plans /> : <Navigate to="/signin" replace />} />
       <Route path="/new" element={signedIn ? <NewAgenda /> : <Navigate to="/signin" replace />} />
-      <Route path="*" element={<Navigate to={signedIn ? '/plans' : '/signin'} replace />} />
+      <Route path="*" element={<Navigate to={signedIn ? '/today' : '/signin'} replace />} />
     </Routes>
   )
 }

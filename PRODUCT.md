@@ -82,9 +82,9 @@ Confirmed functionality and rules:
 - Explicit v1 non-goals: native mobile app, multi-user collaboration, push notifications, calendar
   sync, voice, and payment tiers.
 
-Frontend (milestone M7): the auth screens, the first-agenda wizard and the plan index are built; the
-today dashboard and the progress views are not. Its stack is fixed by the project: React + Vite +
-Tailwind CSS in `apps/web`, a static Render site, talking to the frozen REST contract in
+Frontend (milestone M7): the auth screens, the first-agenda wizard, the plan index and the today
+dashboard are built; the wider progress views are not. Its stack is fixed by the project: React +
+Vite + Tailwind CSS in `apps/web`, a static Render site, talking to the frozen REST contract in
 `docs/api-contract.md`. No SSE endpoint exists, so plan generation is polled via
 `GET /agendas/{id}/draft`.
 
