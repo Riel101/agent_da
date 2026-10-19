@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { ApiError, api, type AgendaStatus, type AgendaSummary } from './lib/api'
 import { formatDayMonthYear } from './lib/dates'
 import { AppHeader } from './components/AppHeader'
+import { ConfirmButton } from './components/ConfirmButton'
 import { Alert, Badge, type BadgeTone } from './components/Ui'
 
 /**
@@ -40,9 +41,18 @@ const STATUS: Record<AgendaStatus, { label: string; tone: BadgeTone }> = {
   cancelled: { label: 'Cancelled', tone: 'neutral' },
 }
 
-function PlanRow({ plan }: { plan: AgendaSummary }) {
+function PlanRow({
+  plan,
+  onDelete,
+  deleting,
+}: {
+  plan: AgendaSummary
+  onDelete: (plan: AgendaSummary) => void
+  deleting: boolean
+}) {
   const meta = STATUS[plan.status] ?? { label: plan.status, tone: 'neutral' as BadgeTone }
-  // A soft-deleted plan is shown for the record, but there is nothing to open.
+  // `cancelled` is only reachable on plans soft-deleted before deletion became
+  // permanent; such a row stays in the record but has nothing to open.
   const openable = plan.status !== 'cancelled'
   const percent = Math.max(0, Math.min(100, plan.progress_pct))
   // Progress belongs to a plan that is actually running; a draft or a
@@ -101,11 +111,22 @@ function PlanRow({ plan }: { plan: AgendaSummary }) {
         ) : null}
       </div>
 
-      {openable ? (
-        <Link to={`/new?agenda=${plan.id}`} className="btn btn-secondary btn-sm shrink-0 self-start">
-          {early ? 'Continue' : 'Open'}
-        </Link>
-      ) : null}
+      <div className="flex shrink-0 flex-wrap items-center gap-2 self-start">
+        {openable ? (
+          <Link to={`/new?agenda=${plan.id}`} className="btn btn-secondary btn-sm">
+            {early ? 'Continue' : 'Open'}
+          </Link>
+        ) : null}
+        <ConfirmButton
+          label="Delete"
+          confirmLabel="Delete for good"
+          ariaLabel={`Delete ${plan.title}`}
+          onConfirm={() => onDelete(plan)}
+          disabled={deleting}
+          idleClassName="btn-ghost"
+          className="btn-sm"
+        />
+      </div>
     </article>
   )
 }
@@ -121,6 +142,8 @@ export default function Plans() {
   const [phase, setPhase] = useState<'loading' | 'ready' | 'error'>('loading')
   const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState<ApiError | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const load = useCallback(
     async (target: number, mode: 'replace' | 'append') => {
@@ -148,6 +171,35 @@ export default function Plans() {
   useEffect(() => {
     void load(1, 'replace')
   }, [load])
+
+  const remove = useCallback(
+    async (plan: AgendaSummary) => {
+      setDeletingId(plan.id)
+      setDeleteError(null)
+      try {
+        await api.deleteAgenda(plan.id)
+        // Drop the row in place; the count follows it. If the page is now empty
+        // but the account has more plans, pull the next page up.
+        const next = items.filter((item) => item.id !== plan.id)
+        setItems(next)
+        setTotal((current) => Math.max(0, current - 1))
+        if (next.length === 0 && total > 1) void load(1, 'replace')
+      } catch (caught) {
+        if (caught instanceof ApiError && caught.status === 404) {
+          // Already gone: say so, and let the list tell the truth.
+          setDeleteError('That plan was already gone.')
+          void load(1, 'replace')
+        } else {
+          setDeleteError(
+            caught instanceof ApiError ? caught.message : 'Could not delete that plan.',
+          )
+        }
+      } finally {
+        setDeletingId(null)
+      }
+    },
+    [items, total, load],
+  )
 
   const hasMore = items.length < total
 
@@ -186,6 +238,14 @@ export default function Plans() {
         </div>
 
         <section className="card mt-4" data-testid="plan-list">
+          {deleteError ? (
+            <div className="border-b border-ground-line p-5 sm:p-6">
+              <Alert tone="danger" title="Could not delete that plan">
+                {deleteError}
+              </Alert>
+            </div>
+          ) : null}
+
           {phase === 'loading' ? (
             <div className="p-5 sm:p-6">
               <ul className="space-y-5" aria-hidden>
@@ -228,9 +288,14 @@ export default function Plans() {
           ) : null}
 
           {phase === 'ready' && items.length > 0 ? (
-            <div className="divide-y divide-ground-line px-5 sm:px-6">
+            <div className="divide-y divide-ground-line p-5 sm:p-6">
               {items.map((plan) => (
-                <PlanRow key={plan.id} plan={plan} />
+                <PlanRow
+                  key={plan.id}
+                  plan={plan}
+                  onDelete={remove}
+                  deleting={deletingId === plan.id}
+                />
               ))}
             </div>
           ) : null}

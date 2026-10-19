@@ -10,12 +10,17 @@ export function ConfirmButton({
   onConfirm,
   disabled = false,
   className = '',
+  idleClassName = 'btn-secondary',
+  ariaLabel,
 }: {
   label: string
   confirmLabel: string
   onConfirm: () => void
   disabled?: boolean
   className?: string
+  /** The unarmed weight; the armed state is always `btn-danger`. */
+  idleClassName?: string
+  ariaLabel?: string
 }) {
   const [armed, setArmed] = useState(false)
 
@@ -29,8 +34,9 @@ export function ConfirmButton({
     <button
       type="button"
       disabled={disabled}
+      aria-label={ariaLabel}
       aria-live={armed ? 'polite' : undefined}
-      className={`btn ${armed ? 'btn-danger' : 'btn-secondary'} ${className}`}
+      className={`btn ${armed ? 'btn-danger' : idleClassName} ${className}`}
       onClick={() => {
         if (armed) {
           setArmed(false)

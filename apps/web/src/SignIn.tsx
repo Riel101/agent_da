@@ -100,7 +100,13 @@ export default function SignIn() {
           {error ? (
             <Alert
               tone="danger"
-              title={error.code === 'BAD_CREDENTIALS' ? 'Wrong email or password' : 'That did not work'}
+              title={
+                error.code === 'BAD_CREDENTIALS'
+                  ? 'Wrong email or password'
+                  : error.code === 'NETWORK_ERROR'
+                    ? 'Cannot reach the server'
+                    : 'That did not work'
+              }
               className="mt-5"
             >
               {error.message}

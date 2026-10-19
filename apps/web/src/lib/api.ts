@@ -287,21 +287,31 @@ async function refreshAccessToken(): Promise<string | null> {
   return refreshInFlight
 }
 
+function isAbortError(caught: unknown): boolean {
+  return caught instanceof Error && caught.name === 'AbortError'
+}
+
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  let response = await raw(path, options)
+  try {
+    let response = await raw(path, options)
 
-  if (response.status === 401 && options.auth !== false && tokens.refresh) {
-    const fresh = await refreshAccessToken()
-    if (fresh) {
-      response = await raw(path, options)
-    } else {
-      authLost?.()
+    if (response.status === 401 && options.auth !== false && tokens.refresh) {
+      const fresh = await refreshAccessToken()
+      if (fresh) {
+        response = await raw(path, options)
+      } else {
+        authLost?.()
+      }
     }
-  }
 
-  if (!response.ok) throw await parseError(response)
-  if (response.status === 204) return undefined as T
-  return (await response.json()) as T
+    if (!response.ok) throw await parseError(response)
+    if (response.status === 204) return undefined as T
+    return (await response.json()) as T
+  } catch (caught) {
+    if (caught instanceof ApiError || isAbortError(caught)) throw caught
+    // `fetch` rejects with a TypeError when the API is down or unreachable.
+    throw new ApiError(0, 'NETWORK_ERROR', `Could not reach the API at ${BASE}. Is it running?`)
+  }
 }
 
 /* ---------------------------------------------------------------- endpoints */
@@ -404,6 +414,10 @@ export const api = {
 
   deleteTodo(todoId: string): Promise<{ detail: string }> {
     return request<{ detail: string }>(`/todos/${todoId}`, { method: 'DELETE' })
+  },
+
+  deleteAgenda(id: string): Promise<{ detail: string }> {
+    return request<{ detail: string }>(`/agendas/${id}`, { method: 'DELETE' })
   },
 }
 

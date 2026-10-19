@@ -64,16 +64,18 @@ autostarts, run that phase with a managed server instead.
 
 - **Chrome or Chromium.** Auto-detected at the usual paths; override with
   `CHROME=/path/to/chrome`. `puppeteer-core` ships no browser.
-- **API dependencies.** The managed server runs `python3 -m uvicorn` with
-  `PYTHONPATH=apps/api/.pylibs` (see `apps/api/requirements.txt`). A virtualenv
-  that has them wins if one is present.
+- **API dependencies.** The managed server picks the first interpreter that can
+  import `uvicorn` and `pydantic_core` (`E2E_PYTHON`, `DEV_PYTHON`, the
+  `apps/api` venv, the repo-root venv, then `python3`). Install
+  `apps/api/requirements.txt` into one of them. A leftover `apps/api/.pylibs` is
+  only used as a fallback when no interpreter qualifies.
 
 ## Outputs
 
 - Screenshots: `.impeccable/review/*.png` — `desktop`, `mobile`, `planning`,
   `clarify`, `review`, `review-top`, `mobile-review`, `mobile-review-top`,
   `approved`, `failed`, `focus-field`, `focus-tab`, `plans`, `plans-filtered`,
-  `plans-mobile`, `plans-empty`.
+  `plans-mobile`, `plans-empty`, `plans-delete-armed`, `plans-deleted`.
 - HTML snapshots: `E2E_SNAP/*.html` — `capture`, `capture-mobile`, `review`,
   `review-mobile`.
 

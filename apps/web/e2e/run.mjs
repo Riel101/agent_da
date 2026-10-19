@@ -9,11 +9,11 @@
  * screenshots and HTML snapshots, then tears everything down. To attach to
  * servers you already run, export E2E_NO_SERVER=1 (you then own autostart).
  */
-import { spawn } from 'node:child_process'
+import { spawn, spawnSync } from 'node:child_process'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-import { API_DIR, WEB_DIR, config, createApi, createChecks, launchBrowser, sleep } from './harness.mjs'
+import { API_DIR, ROOT, WEB_DIR, config, createApi, createChecks, launchBrowser, sleep } from './harness.mjs'
 
 import * as capture from './capture.mjs'
 import * as planning from './planning.mjs'
@@ -37,8 +37,56 @@ let apiAutostart = null
 let viteProcess = null
 let stopping = false
 
+const PYLIBS = path.join(API_DIR, '.pylibs')
+let apiPython = null
+
+/** The inherited PYTHONPATH, minus the vendored deps (they may be stale). */
+function inheritedPythonPath() {
+  return (process.env.PYTHONPATH ?? '')
+    .split(path.delimiter)
+    .filter((entry) => entry && path.resolve(entry) !== PYLIBS)
+    .join(path.delimiter)
+}
+
+function canImport(python, pythonPath) {
+  const env = { ...process.env }
+  const combined = [inheritedPythonPath(), pythonPath].filter(Boolean).join(path.delimiter)
+  if (combined) env.PYTHONPATH = combined
+  else delete env.PYTHONPATH
+  return spawnSync(python, ['-c', 'import uvicorn, pydantic_core'], { env, stdio: 'ignore' }).status === 0
+}
+
+/**
+ * The first interpreter that can import the API deps. `.pylibs` is only a
+ * last-resort fallback: its compiled wheels match one Python version, so
+ * putting it in front of a working venv would shadow the venv's packages.
+ */
 function resolvePython() {
-  return process.env.E2E_PYTHON ?? process.env.DEV_PYTHON ?? 'python3'
+  if (apiPython) return apiPython
+  const candidates = [
+    process.env.E2E_PYTHON,
+    process.env.DEV_PYTHON,
+    path.join(API_DIR, '.venv', 'bin', 'python'),
+    path.join(ROOT, '.venv', 'bin', 'python'),
+    'python3',
+  ].filter(Boolean)
+
+  for (const python of candidates) {
+    if (canImport(python)) {
+      apiPython = { python, pythonPath: '' }
+      return apiPython
+    }
+  }
+  for (const python of candidates) {
+    if (canImport(python, PYLIBS)) {
+      apiPython = { python, pythonPath: PYLIBS }
+      return apiPython
+    }
+  }
+  throw new Error(
+    'No Python interpreter can import the API dependencies. Install apps/api/requirements.txt ' +
+      'into a virtualenv, or point E2E_PYTHON at one.',
+  )
 }
 
 async function isUp(url) {
@@ -90,9 +138,9 @@ function stopProcess(child) {
 }
 
 function startApi(autostart) {
+  const { python, pythonPath } = resolvePython()
   const env = {
     ...process.env,
-    PYTHONPATH: [path.join(API_DIR, '.pylibs'), process.env.PYTHONPATH].filter(Boolean).join(path.delimiter),
     DATABASE_URL: `sqlite+aiosqlite:///${config.db}`,
     AGENT_AUTOSTART: autostart ? 'true' : 'false',
     SCHEDULER_ENABLED: 'false',
@@ -100,8 +148,11 @@ function startApi(autostart) {
     // Quiet the "HMAC key is too short" warning the dev default triggers.
     JWT_SECRET: process.env.JWT_SECRET ?? 'agentda-e2e-harness-signing-key-32b+',
   }
+  const pythonPathValue = [inheritedPythonPath(), pythonPath].filter(Boolean).join(path.delimiter)
+  if (pythonPathValue) env.PYTHONPATH = pythonPathValue
+  else delete env.PYTHONPATH
   return track(
-    spawn(resolvePython(), ['-m', 'uvicorn', 'app.main:app', '--host', apiHost, '--port', apiPort, '--log-level', 'warning'], {
+    spawn(python, ['-m', 'uvicorn', 'app.main:app', '--host', apiHost, '--port', apiPort, '--log-level', 'warning'], {
       cwd: API_DIR,
       env,
       stdio: ['ignore', 'ignore', 'inherit'],

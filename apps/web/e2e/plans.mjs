@@ -1,7 +1,8 @@
 /**
  * Phase: `plans` — the index of every plan, populated, filtered and empty.
  *
- * Writes plans.png, plans-filtered.png, plans-mobile.png and plans-empty.png.
+ * Writes plans.png, plans-filtered.png, plans-mobile.png, plans-empty.png,
+ * plans-delete-armed.png and plans-deleted.png.
  * Needs AGENT_AUTOSTART=true.
  */
 import { shot, sleep } from './harness.mjs'
@@ -127,5 +128,66 @@ export async function run({ browser, api, checks }) {
     expect: '[data-testid="plan-list"]',
     settle: 900,
     fullPage: true,
+  })
+
+  // ---- delete: arm, confirm, and the row is gone for good ---------------
+  await shot(browser, {
+    name: 'plans-delete-armed',
+    width: 1440,
+    height: 900,
+    session: holder.session,
+    route: '/plans',
+    expect: '[data-testid="plan-list"]',
+    settle: 900,
+    fullPage: false,
+    probe: async (page) => {
+      // The first press only arms the control; the label names the consequence.
+      const deleteButton = await page.$(`${ROWS} button[aria-label^="Delete "]`)
+      checks.ok(deleteButton !== null, 'plans-delete-armed: no delete control on a plan row')
+      if (!deleteButton) return
+      await deleteButton.click()
+      const armed = await page.$eval(`${ROWS} button[aria-label^="Delete "]`, (node) => node.textContent ?? '')
+      checks.ok(
+        armed.includes('Delete for good'),
+        `plans-delete-armed: the control did not arm (saw "${armed.trim()}")`,
+      )
+      const rows = await page.$$eval(ROWS, (nodes) => nodes.length)
+      checks.ok(rows === 3, `plans-delete-armed: arming must not delete anything (saw ${rows} rows)`)
+    },
+  })
+
+  await shot(browser, {
+    name: 'plans-deleted',
+    width: 1440,
+    height: 900,
+    session: holder.session,
+    route: '/plans',
+    expect: '[data-testid="plan-list"]',
+    settle: 900,
+    fullPage: false,
+    probe: async (page) => {
+      const before = await page.$$eval(ROWS, (nodes) => nodes.length)
+      checks.ok(before === 3, `plans-deleted: expected 3 rows before deleting, saw ${before}`)
+
+      const deleteButton = await page.$(`${ROWS} button[aria-label^="Delete "]`)
+      checks.ok(deleteButton !== null, 'plans-deleted: no delete control on a plan row')
+      if (!deleteButton) return
+      await deleteButton.click()
+
+      await Promise.all([
+        page.waitForResponse((response) => response.request().method() === 'DELETE' && response.ok()),
+        deleteButton.click(),
+      ])
+      await sleep(400)
+
+      const after = await page.$$eval(ROWS, (nodes) => nodes.length)
+      checks.ok(after === 2, `plans-deleted: expected 2 rows after deleting, saw ${after}`)
+
+      await page.reload({ waitUntil: 'load' })
+      await page.waitForSelector(ROWS, { timeout: 10_000 })
+      await sleep(600)
+      const persisted = await page.$$eval(ROWS, (nodes) => nodes.length)
+      checks.ok(persisted === 2, `plans-deleted: the deleted plan came back after reload (${persisted} rows)`)
+    },
   })
 }
