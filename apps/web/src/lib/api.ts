@@ -6,7 +6,12 @@
  * refresh token is dead too.
  */
 
-const BASE: string = (import.meta.env.VITE_API_URL as string | undefined) ?? 'http://localhost:8000/api/v1'
+const DEFAULT_BASE = 'http://localhost:8000/api/v1'
+// Deployment builds set VITE_API_URL; tolerate a trailing slash so requests
+// never become `.../api/v1//auth/login`.
+const BASE: string = (
+  (import.meta.env.VITE_API_URL as string | undefined)?.trim() || DEFAULT_BASE
+).replace(/\/+$/, '')
 
 export type ReminderChannel = 'email' | 'whatsapp'
 export type DraftStatus = 'queued' | 'running' | 'needs_input' | 'needs_review' | 'approved' | 'failed'

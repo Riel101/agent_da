@@ -1,7 +1,8 @@
 # Render Blueprint for Agent DA.
 #
 #   Web Service  -> FastAPI + the in-process scheduler (LangGraph agent)
-#   Cron Job     -> dispatch safety net, in case the scheduler stalls on deploy
+#   Static Site  -> the React app (Today, plan index, agenda wizard)
+#   Cron Jobs    -> dispatch safety net + nightly day-close
 #   Postgres     -> agendas, to-dos, points ledger, reminders, graph checkpoints
 #
 # Deploy with: Dashboard -> Blueprints -> New Blueprint Instance -> this repo.
@@ -26,7 +27,9 @@ services:
     buildCommand: |
       pip install --upgrade pip
       pip install -r requirements.txt
-      alembic upgrade head
+    # Runs after the build and before traffic switches to the new instance, with
+    # the service's env (so it can reach the private database).
+    preDeployCommand: alembic upgrade head
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips '*'
     envVars:
       - key: PYTHON_VERSION
@@ -48,8 +51,12 @@ services:
       - key: LLM_MODEL
         value: nvidia/nemotron-3-ultra-550b-a55b
       # ---- fill these in from the dashboard ----
+      # The static site's origin, e.g. https://agent-da-web.onrender.com.
+      # Used for verification and password-reset links in email.
       - key: PUBLIC_BASE_URL
         sync: false
+      # The static site's origin, e.g. https://agent-da-web.onrender.com.
+      # Comma-separate additional origins (custom domains).
       - key: CORS_ORIGINS
         sync: false
       - key: NVIDIA_API_KEY
@@ -153,18 +160,27 @@ services:
       - key: ALLOW_POINT_DEDUCTIONS
         value: "true"
 
-  # The React app is not built yet. When it is, add a static site here:
+  # The React app: a static site on the same blueprint.
   #
-  # - type: web
-  #   name: agent-da-web
-  #   runtime: static
-  #   rootDir: apps/web
-  #   buildCommand: npm ci && npm run build
-  #   staticPublishPath: dist
-  #   envVars:
-  #     - key: VITE_API_URL
-  #       sync: false
-  #   routes:
-  #     - type: rewrite
-  #       source: /*
-  #       destination: /index.html
+  # `VITE_API_URL` is baked into the bundle at build time, so set it to the
+  # API's public URL plus `/api/v1` (e.g. https://agent-da-api.onrender.com/api/v1)
+  # and redeploy after the API URL exists. A missing value fails the build; a
+  # wrong value makes the deployed UI call the wrong API.
+  - type: web
+    name: agent-da-web
+    runtime: static
+    rootDir: apps/web
+    buildCommand: npm ci --include=dev && npm run build
+    staticPublishPath: dist
+    autoDeploy: true
+    envVars:
+      # Vite 8 requires Node ^20.19 || >=22.12; pin it rather than inherit.
+      - key: NODE_VERSION
+        value: 22.12.0
+      - key: VITE_API_URL
+        sync: false
+    routes:
+      # Client-side routes (/today, /plans, /new) fall back to the SPA shell.
+      - type: rewrite
+        source: /*
+        destination: /index.html

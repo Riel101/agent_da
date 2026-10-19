@@ -168,10 +168,12 @@ rollup supersedes.
 
 ```bash
 cd apps/api
+pip install -r requirements.txt
+pip install "pytest>=8.3" "pytest-asyncio>=0.24"
 python -m pytest -q
 ```
 
-40 tests covering auth and token rotation, graph invariants (dating, day count, the finale, chunked
+43 tests covering auth and token rotation, graph invariants (dating, day count, the finale, chunked
 long plans, clarifying questions, per-day regeneration, approval), the full HTTP lifecycle from
 signup to agenda completion and the perfect-run bonus, reminder idempotency, skipped-channel
 handling and the one-message-per-Sunday rule, and missed-day penalties.
@@ -195,7 +197,38 @@ The frontend has no unit suite; it is covered by the browser smoke harness above
 
 ## Deploying to Render
 
-`render.yaml` at the repo root defines the database, the web service, and two cron jobs. After
-`git push`, use **Dashboard → Blueprints → New Blueprint Instance**. Variables marked `sync: false`
-(`NVIDIA_API_KEY`, `SMTP_*`, `TWILIO_*`, `PUBLIC_BASE_URL`, `CORS_ORIGINS`) are filled in from the
-dashboard; `JWT_SECRET` and `INTERNAL_TOKEN` are generated.
+`render.yaml` at the repo root defines the database, the API web service, the static React site, and
+two cron jobs. After `git push`, use **Dashboard → Blueprints → New Blueprint Instance**. Variables
+marked `sync: false` (`NVIDIA_API_KEY`, `SMTP_*`, `TWILIO_*`, `PUBLIC_BASE_URL`, `CORS_ORIGINS`,
+`VITE_API_URL`) are filled in from the dashboard; `JWT_SECRET` and `INTERNAL_TOKEN` are generated.
+Migrations run as the API's pre-deploy command, before traffic switches to the new instance.
+
+### Wiring the two services together
+
+Render assigns URLs only after the first deploy, so set these once the service URLs exist and
+redeploy:
+
+| Service | Variable | Value |
+| --- | --- | --- |
+| API | `PUBLIC_BASE_URL` | `https://agent-da-web.onrender.com` (the web app, for email links) |
+| API | `CORS_ORIGINS` | `https://agent-da-web.onrender.com` (comma-separate custom domains) |
+| Static site | `VITE_API_URL` | `https://agent-da-api.onrender.com/api/v1` |
+
+`VITE_API_URL` is baked into the bundle by `npm run build`; it is not read at runtime, and Vite does
+not read the repo-root `.env`. The Render build **fails** if it is unset on Render, and a wrong value
+points the UI at the wrong API. A trailing slash is tolerated. The static site needs Node `^20.19`
+or `>=22.12` (Vite 8); the blueprint pins `NODE_VERSION=22.12.0`.
+
+The static site rewrites every path to `index.html`, so a direct load of `/today` or `/plans` boots
+the SPA instead of a 404. `npm run e2e:today` exercises the daily surface, including a check that a
+completed to-do survives a reload.
+
+### Known gaps before launch
+
+- The API emails links to `/verify-email` and `/reset-password`, but the React app does not yet have
+  those routes, and the sign-in screen has no "forgot password" entry point. The API endpoints exist;
+  only the two screens are missing.
+- Reminders fall back to the console and are recorded as `skipped` when SMTP / Twilio credentials are
+  absent, so the app is usable but nothing leaves the server.
+- Wider progress views (calendar, streaks over time) are still to come; the Today surface is the
+  daily execution view.

@@ -49,7 +49,8 @@ class Settings(BaseSettings):
     environment: Literal["local", "test", "staging", "production"] = "local"
     debug: bool = False
     api_prefix: str = "/api/v1"
-    public_base_url: str = "http://localhost:8000"
+    # Public origin used in user-facing email links (the web app, not the API).
+    public_base_url: str = "http://localhost:5173"
     # ``NoDecode`` stops pydantic-settings from JSON-decoding this before the
     # validator below runs, so ``CORS_ORIGINS=a,b`` works as documented. Without
     # it, simply having the line in .env made the application fail to start.

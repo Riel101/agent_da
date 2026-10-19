@@ -25,7 +25,7 @@ apps/api/.pylibs/
 htmlcov/
 .impeccaple/
 
-# --- Frontend (apps/web, not built yet) -----------------------------------
+# --- Frontend build output -------------------------------------------------
 node_modules/
 dist/
 build/

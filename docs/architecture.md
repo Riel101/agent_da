@@ -1,7 +1,8 @@
 # Agent DA — Architecture Plan
 
-**Status:** Backend implemented in `apps/api` (36 tests passing). The React frontend is deliberately
-deferred. See [`running.md`](./running.md) to start it.
+**Status:** Backend implemented in `apps/api` (43 tests passing) and the React app in `apps/web`
+covers the agenda wizard, plan index and Today surface. Wider progress views are deferred. See
+[`running.md`](./running.md) to start it.
 
 An agent that helps a user reach a long-term agenda by breaking it into daily sub-agendas,
 turning each day's sub-agenda into a concrete to-do list, reminding the user on their chosen
@@ -11,11 +12,11 @@ channel, and rewarding completion with points and streaks.
 
 | Area | Decision |
 | --- | --- |
-| Delivery | Backend + agent built; frontend deferred |
+| Delivery | Backend + agent + web app built; wider progress views deferred |
 | Agent orchestration | LangGraph (Python) — `StateGraph` with a Postgres checkpointer |
 | LLM | `nvidia/nemotron-3-ultra-550b-a55b` via NVIDIA NIM, structured output; a deterministic offline planner runs when no API key is configured |
 | Backend | FastAPI (ASGI) exposing the LangGraph agent + REST API |
-| Frontend | React + Vite + Tailwind CSS (not built yet) |
+| Frontend | React + Vite + Tailwind CSS — wizard, plan index, Today dashboard |
 | Database | Render Postgres (async SQLAlchemy 2.x + Alembic); SQLite for local dev and tests |
 | Auth | Email + password (bcrypt), JWT access tokens + rotating refresh tokens |
 | Email verification | **Optional** — never blocks reminders |
@@ -217,8 +218,12 @@ free-form for email.
 - **Cron Job (safety net)**: `*/5 * * * *` → `python -m app.cli dispatch`, in case the in-process
   scheduler stalls during a deploy. It is dispatch-only; day-close, materialisation and the weekly
   rollup stay in-process, and every job is idempotent, so a cron miss is never fatal.
-- **Static site / Node service**: the Vite build for `apps/web` (`VITE_API_URL` at build time).
-- Migrations run on release (`alembic upgrade head`) before the new instance goes live.
+- **Static site**: the Vite build for `apps/web` (`npm ci --include=dev && npm run build`), serving
+  `dist` with a `/* → /index.html` rewrite so client-side routes survive a refresh. `VITE_API_URL`
+  is baked in at build time and must be the API URL plus `/api/v1`; `CORS_ORIGINS` on the API must
+  list the site's origin.
+- Migrations run as the API's pre-deploy command (`alembic upgrade head`) before the new instance
+  goes live.
 
 Environment variables: see [`.env.example`](../.env.example) for the full annotated list. Every
 value has a working default, so the app boots and degrades gracefully with an empty file.
@@ -276,8 +281,8 @@ value has a working default, so the app boots and degrades gracefully with an em
 3. **M3 — Daily execution** ✅ materialisation, to-do CRUD, completion, points ledger, dashboard
 4. **M4 — Delivery** ✅ channel adapters (SMTP / Twilio / Meta / console), dispatcher, APScheduler + cron safety net
 5. **M5 — Gamification** ✅ streaks, missed-day penalties, bonuses, weekly rollup, progress endpoint
-6. **M6 — Hardening** ✅ 36 tests, rate limits, structured logging, health/readiness, Alembic migration
-7. **M7 — Frontend** ⏳ React + Vite + Tailwind: auth, dashboard, agenda wizard, progress charts
+6. **M6 — Hardening** ✅ 43 tests, rate limits, structured logging, health/readiness, Alembic migration
+7. **M7 — Frontend** ✅ React + Vite + Tailwind: auth, agenda wizard, plan index, Today dashboard; progress charts still to come
 
 ## 12. Resolved product questions
 

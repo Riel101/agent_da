@@ -63,7 +63,7 @@ The mechanism a neighboring habit or planning app could not truthfully copy:
 - Day close (runs every 30 min, plus an hourly cron) marks each fully elapsed day `done` or
   `missed`, applies the missed-day penalty once, and recomputes streaks.
 - Deployment is a Render blueprint: a FastAPI web service, managed Postgres, a `*/5 * * * *` dispatch
-  cron, an hourly day-close cron, and (once built) a static site for the React app.
+  cron, an hourly day-close cron, and a static site for the React app.
 
 ## Capabilities and Constraints
 
