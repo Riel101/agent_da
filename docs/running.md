@@ -69,13 +69,14 @@ npm install
 npm run dev:all
 ```
 
-`dev:all` starts the API (`:8000`) and Vite (`:5173`) together — Ctrl-C stops both. It prefers an
-interpreter that already has the API dependencies: `DEV_PYTHON` if set, otherwise the venv in
-`apps/api` or the repo root. Override with `API_PORT`, `WEB_PORT`, `DATABASE_URL`, `AGENT_AUTOSTART`,
+`dev:all` starts the API (`:8000`) and Vite (`:5173`) together — Ctrl-C stops both. On the first run
+it creates `apps/api/.venv` and installs `apps/api/requirements.txt` if no usable interpreter exists;
+later runs reuse it. Set `DEV_PYTHON` to prefer a ready interpreter (it must import `uvicorn` and
+`pydantic_core`; otherwise the venv is used). Override with `API_PORT`, `WEB_PORT`, `DATABASE_URL`, `AGENT_AUTOSTART`,
 `SCHEDULER_ENABLED`, or `DEV_PYTHON`. Then open http://localhost:5173 and sign in.
 
-The old `apps/api/.pylibs` directory is no longer committed. If it is still lying around it is used
-only as a fallback for an interpreter that cannot import `uvicorn`/`pydantic_core` on its own.
+`DEV_SETUP_ONLY=true npm run dev:all` creates/repairs the venv without starting anything. The old
+`apps/api/.pylibs` directory is no longer used.
 
 To run the two servers by hand instead:
 

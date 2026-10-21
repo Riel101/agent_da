@@ -3,7 +3,9 @@
 # Start the API, the Vite dev server and a local SMTP catcher together.
 #
 #   npm run dev:all            # from apps/web
+#   DEV_SETUP_ONLY=true npm run dev:all   # only create/repair the API venv
 #
+# The first run creates apps/api/.venv and installs the API requirements.
 # Ctrl-C stops all of them. Override anything with the environment, e.g.
 #   API_PORT=9000 SCHEDULER_ENABLED=false npm run dev:all
 #   MAIL_CATCHER=false npm run dev:all     # no catcher; reminders are logged only
@@ -27,28 +29,14 @@ MAIL_CATCHER="${MAIL_CATCHER:-true}"
 MAIL_PORT="${MAIL_PORT:-1025}"
 MAIL_DIR="${MAIL_DIR:-${TMPDIR:-/tmp}/agentda-mail}"
 
-# Prefer an interpreter that already has the API deps: an activated virtualenv
-# (`DEV_PYTHON` from the environment) or one of the repo venvs. Only fall back
-# to the vendored apps/api/.pylibs when none works — those are compiled wheels
-# for one Python version and would shadow a venv's own packages.
-if [[ -z "${DEV_PYTHON:-}" ]]; then
-  DEV_PYTHON="python3"
-  for candidate in "$API_DIR/.venv/bin/python" "$ROOT/.venv/bin/python"; do
-    if [[ -x "$candidate" ]] && "$candidate" -c 'import uvicorn, pydantic_core' >/dev/null 2>&1; then
-      DEV_PYTHON="$candidate"
-      break
-    fi
-  done
-fi
+# The helper prefers an explicit DEV_PYTHON when it can import the API deps;
+# otherwise it creates/repairs apps/api/.venv. It prints the interpreter path
+# on stdout and progress on stderr.
+DEV_PYTHON="$(bash "$SCRIPT_DIR/ensure-api-venv.sh")"
 
-PYLIBS=""
-if ! "$DEV_PYTHON" -c 'import uvicorn, pydantic_core' >/dev/null 2>&1; then
-  PYLIBS="$API_DIR/.pylibs"
-  if ! PYTHONPATH="$PYLIBS" "$DEV_PYTHON" -c 'import uvicorn, pydantic_core' >/dev/null 2>&1; then
-    echo "[dev] $DEV_PYTHON cannot import the API dependencies." >&2
-    echo "[dev] Install apps/api/requirements.txt into a virtualenv, or set DEV_PYTHON." >&2
-    exit 1
-  fi
+if [[ "${DEV_SETUP_ONLY:-}" == "true" ]]; then
+  echo "[dev] API dependencies ready: $DEV_PYTHON"
+  exit 0
 fi
 
 api_pid=""
@@ -77,7 +65,7 @@ trap cleanup EXIT INT TERM
 echo "[dev] api  -> http://$API_HOST:$API_PORT  (autostart=$AGENT_AUTOSTART scheduler=$SCHEDULER_ENABLED)"
 echo "[dev] web  -> http://localhost:$WEB_PORT"
 echo "[dev] db   -> $DATABASE_URL"
-echo "[dev] py   -> $DEV_PYTHON${PYLIBS:+ (deps from .pylibs)}"
+echo "[dev] py   -> $DEV_PYTHON"
 if [[ "$MAIL_CATCHER" == "true" ]]; then
   echo "[dev] mail -> SMTP on 127.0.0.1:$MAIL_PORT, saved under $MAIL_DIR"
 fi
@@ -85,9 +73,6 @@ fi
 if [[ "$MAIL_CATCHER" == "true" ]]; then
   (
     cd "$API_DIR"
-    if [[ -n "$PYLIBS" ]]; then
-      export PYTHONPATH="$PYLIBS${PYTHONPATH:+:$PYTHONPATH}"
-    fi
     exec "$DEV_PYTHON" -m app.cli mail-catcher --port "$MAIL_PORT" --out "$MAIL_DIR"
   ) &
   mail_pid=$!
@@ -95,9 +80,6 @@ fi
 
 (
   cd "$API_DIR"
-  if [[ -n "$PYLIBS" ]]; then
-    export PYTHONPATH="$PYLIBS${PYTHONPATH:+:$PYTHONPATH}"
-  fi
   export DATABASE_URL AGENT_AUTOSTART SCHEDULER_ENABLED
   if [[ "$MAIL_CATCHER" == "true" ]]; then
     # Keep the API pointed at the catcher even when MAIL_PORT is overridden.

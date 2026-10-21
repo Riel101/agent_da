@@ -78,11 +78,11 @@ Full instructions, tests and deployment: [`docs/running.md`](docs/running.md).
 
 ## The app
 
-Run the whole product locally with `npm run dev:all` from `apps/web`: sign in, capture an intention
-and a deadline, watch the agent plan, answer its questions, review the drafted days, approve, and then
-work each day from the **Today** surface — check to-dos off and watch the progress bar, points and
-streak move. `npm run e2e:all` drives every surface headless — see
-[`docs/running.md`](docs/running.md).
+Run the whole product locally with `npm run dev:all` from `apps/web`: on first run it creates
+`apps/api/.venv` and installs the API requirements. Then sign in, capture an intention and a deadline,
+watch the agent plan, answer its questions, review the drafted days, approve, and work each day from
+the **Today** surface — check to-dos off and watch the progress bar, points and streak move.
+`npm run e2e:all` drives every surface headless — see [`docs/running.md`](docs/running.md).
 
 What remains is the wider progress views (calendar, streaks over time). The API contract they need is
 already frozen in [`docs/api-contract.md`](docs/api-contract.md).

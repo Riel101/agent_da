@@ -38,55 +38,82 @@ let apiAutostart = null
 let viteProcess = null
 let stopping = false
 
-const PYLIBS = path.join(API_DIR, '.pylibs')
 let apiPython = null
 
-/** The inherited PYTHONPATH, minus the vendored deps (they may be stale). */
+/** The inherited PYTHONPATH, minus the old vendored deps. */
 function inheritedPythonPath() {
+  const pylibs = path.join(API_DIR, '.pylibs')
   return (process.env.PYTHONPATH ?? '')
     .split(path.delimiter)
-    .filter((entry) => entry && path.resolve(entry) !== PYLIBS)
+    .filter((entry) => entry && path.resolve(entry) !== pylibs)
     .join(path.delimiter)
 }
 
-function canImport(python, pythonPath) {
+function canImport(python) {
   const env = { ...process.env }
-  const combined = [inheritedPythonPath(), pythonPath].filter(Boolean).join(path.delimiter)
-  if (combined) env.PYTHONPATH = combined
+  const cleaned = inheritedPythonPath()
+  if (cleaned) env.PYTHONPATH = cleaned
   else delete env.PYTHONPATH
   return spawnSync(python, ['-c', 'import uvicorn, pydantic_core'], { env, stdio: 'ignore' }).status === 0
 }
 
 /**
- * The first interpreter that can import the API deps. `.pylibs` is only a
- * last-resort fallback: its compiled wheels match one Python version, so
- * putting it in front of a working venv would shadow the venv's packages.
+ * The first interpreter that can import the API deps. An explicit
+ * E2E_PYTHON/DEV_PYTHON wins; otherwise the shared bootstrap script creates
+ * (or repairs) apps/api/.venv.
  */
 function resolvePython() {
   if (apiPython) return apiPython
-  const candidates = [
-    process.env.E2E_PYTHON,
-    process.env.DEV_PYTHON,
+
+  const e2ePython = process.env.E2E_PYTHON
+  if (e2ePython) {
+    if (!canImport(e2ePython)) {
+      throw new Error(
+        `E2E_PYTHON=${e2ePython} cannot import uvicorn/pydantic_core. ` +
+          'Point it at a ready interpreter or unset it.',
+      )
+    }
+    apiPython = e2ePython
+    return e2ePython
+  }
+
+  const devPython = process.env.DEV_PYTHON
+  if (devPython) {
+    if (canImport(devPython)) {
+      apiPython = devPython
+      return devPython
+    }
+    console.warn(
+      `[e2e] DEV_PYTHON=${devPython} cannot import uvicorn/pydantic_core; using the repo venv.`,
+    )
+  }
+
+  const ensure = path.join(WEB_DIR, 'scripts', 'ensure-api-venv.sh')
+  const boot = spawnSync('bash', [ensure], { encoding: 'utf8' })
+  if (boot.status === 0) {
+    const python = boot.stdout.trim().split(/\r?\n/).pop()
+    if (python && canImport(python)) {
+      apiPython = python
+      return python
+    }
+  } else if (boot.stderr) {
+    process.stderr.write(boot.stderr)
+  }
+
+  for (const python of [
     path.join(API_DIR, '.venv', 'bin', 'python'),
     path.join(ROOT, '.venv', 'bin', 'python'),
     'python3',
-  ].filter(Boolean)
-
-  for (const python of candidates) {
+  ]) {
     if (canImport(python)) {
-      apiPython = { python, pythonPath: '' }
-      return apiPython
+      apiPython = python
+      return python
     }
   }
-  for (const python of candidates) {
-    if (canImport(python, PYLIBS)) {
-      apiPython = { python, pythonPath: PYLIBS }
-      return apiPython
-    }
-  }
+
   throw new Error(
-    'No Python interpreter can import the API dependencies. Install apps/api/requirements.txt ' +
-      'into a virtualenv, or point E2E_PYTHON at one.',
+    'No Python interpreter can import the API dependencies. Run `npm run dev:all` once ' +
+      'to create apps/api/.venv, or set E2E_PYTHON.',
   )
 }
 
@@ -139,7 +166,7 @@ function stopProcess(child) {
 }
 
 function startApi(autostart) {
-  const { python, pythonPath } = resolvePython()
+  const python = resolvePython()
   const env = {
     ...process.env,
     DATABASE_URL: `sqlite+aiosqlite:///${config.db}`,
@@ -149,7 +176,7 @@ function startApi(autostart) {
     // Quiet the "HMAC key is too short" warning the dev default triggers.
     JWT_SECRET: process.env.JWT_SECRET ?? 'agentda-e2e-harness-signing-key-32b+',
   }
-  const pythonPathValue = [inheritedPythonPath(), pythonPath].filter(Boolean).join(path.delimiter)
+  const pythonPathValue = inheritedPythonPath()
   if (pythonPathValue) env.PYTHONPATH = pythonPathValue
   else delete env.PYTHONPATH
   return track(

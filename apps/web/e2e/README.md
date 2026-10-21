@@ -59,17 +59,18 @@ autostarts, run that phase with a managed server instead.
 | `E2E_START_DATE` | today, `Africa/Lagos` | Fixed agenda start date |
 | `E2E_NO_SERVER` | unset | Attach to running servers |
 | `CHROME` | auto-detected | Chrome/Chromium executable |
-| `E2E_PYTHON` / `DEV_PYTHON` | `python3` | Interpreter that can `import uvicorn` |
+| `E2E_PYTHON` / `DEV_PYTHON` | unset | Ready interpreter that can `import uvicorn` (skips venv bootstrap) |
 
 ## Requirements
 
 - **Chrome or Chromium.** Auto-detected at the usual paths; override with
   `CHROME=/path/to/chrome`. `puppeteer-core` ships no browser.
-- **API dependencies.** The managed server picks the first interpreter that can
-  import `uvicorn` and `pydantic_core` (`E2E_PYTHON`, `DEV_PYTHON`, the
-  `apps/api` venv, the repo-root venv, then `python3`). Install
-  `apps/api/requirements.txt` into one of them. A leftover `apps/api/.pylibs` is
-  only used as a fallback when no interpreter qualifies.
+- **API dependencies.** The managed server reuses `apps/api/.venv`. If no
+  interpreter can import `uvicorn` and `pydantic_core`, it runs
+  `scripts/ensure-api-venv.sh`, which creates the venv and installs
+  `apps/api/requirements.txt`. Set `E2E_PYTHON` / `DEV_PYTHON` to skip that
+  bootstrap and use a ready interpreter instead. `apps/api/.pylibs` is no
+  longer used.
 
 ## Outputs
 
